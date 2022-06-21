@@ -32,7 +32,7 @@ class _StartStopButtonState extends State<StartStopButton> {
         ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
         onPressed: () {
           setState(() {
-            widget.timer.isActive ? stopTimer() : widget.startTimer(stopTimeStamp?.millisecondsSinceEpoch);
+            widget.timer.isActive ? stopTimer() : widget.startTimer(stopTimeStamp != null ? stopTimeStamp?.millisecondsSinceEpoch : DateTime.now().millisecondsSinceEpoch);
             widget.updateFormattedTimeLeftString();
           });
         },

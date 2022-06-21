@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'Pages/Pomo/pomo.dart';
+import 'Pages/Pomo/pomo_page.dart';
 
 main() async {
   await GetStorage.init();
@@ -22,11 +22,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    super.initState();
-    darkModeEnabled = box.read("DarkMode") ?? false;
-    if (darkModeEnabled) {
-      Get.changeTheme(ThemeData.dark());
+    darkModeEnabled = box.read("DarkMode") ?? true;
+    if (!darkModeEnabled) {
+      Get.changeThemeMode(ThemeMode.dark);
     }
+    super.initState();
+  }
+
+  void changeDarModeEnabled(bool newVal) {
+    setState(() {
+      darkModeEnabled = newVal;
+      box.write("DarkMode", newVal);
+    });
   }
 
   @override
@@ -47,16 +54,17 @@ class _MyAppState extends State<MyApp> {
         textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
       ),
       themeMode: ThemeMode.light,
-      home: SafeArea(top: true, child: Main(title: 'Pomo Focus', darkModeEnabled: darkModeEnabled,)),
+      home: SafeArea(top: true, child: Main(title: 'Pomo Focus', darkModeEnabled: darkModeEnabled, changeDarModeEnabled: changeDarModeEnabled)),
     );
   }
 }
 
 class Main extends StatefulWidget {
-  const Main({Key? key, required this.title, required this.darkModeEnabled}) : super(key: key);
+  const Main({Key? key, required this.title, required this.darkModeEnabled, required this.changeDarModeEnabled}) : super(key: key);
 
   final String title;
   final bool darkModeEnabled;
+  final Function changeDarModeEnabled;
 
   @override
   State<Main> createState() => _MainState();
@@ -77,13 +85,14 @@ class _MainState extends State<Main> {
                 onPressed: () {
                   setState(() {
                     Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+                    widget.changeDarModeEnabled(Get.isDarkMode);
                   });
                 },
-                icon: widget.darkModeEnabled ? const Icon(Icons.sunny, color: Colors.white, size: 18) : const Icon(Icons.dark_mode, color: Colors.black, size: 18)),
+                icon: widget.darkModeEnabled ? const Icon(Icons.dark_mode, color: Colors.black, size: 18) : const Icon(Icons.sunny, color: Colors.white, size: 18)),
           )
         ],
       ),
-      body: const RepaintBoundary(child: Pomo()),
+      body: const RepaintBoundary(child: PomoPage()),
     );
   }
 }

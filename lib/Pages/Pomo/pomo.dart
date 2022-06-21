@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/reset_button.dart';
@@ -19,8 +20,11 @@ class _PomoState extends State<Pomo> {
   int endTimestamp = 0;
   String timeLeftString = "";
   late Timer timer;
+  bool isTimerFinished = false;
 
   int defaultMinutes = 45;
+
+  final AudioPlayer player = AudioPlayer();
 
   @override
   void initState() {
@@ -36,6 +40,9 @@ class _PomoState extends State<Pomo> {
       }
       timer = Timer.periodic(const Duration(milliseconds: 100), (Timer t) {
         updateFormattedTimeLeftString();
+        if (!isTimerFinished) {
+          isTimerFinished = isTimerDone();
+        }
       });
     });
   }
@@ -64,6 +71,8 @@ class _PomoState extends State<Pomo> {
   bool isTimerDone() {
     DateTime timestampDate = getDateTime();
     if (DateTime.now().compareTo(timestampDate) >= 0) {
+      player.play(AssetSource("audio/notification_sound.mp3"));
+      timer.cancel();
       return true;
     } else {
       return false;
