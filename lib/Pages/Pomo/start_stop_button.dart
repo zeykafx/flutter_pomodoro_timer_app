@@ -14,11 +14,9 @@ class StartStopButton extends StatefulWidget {
 }
 
 class _StartStopButtonState extends State<StartStopButton> {
-  DateTime? stopTimeStamp;
 
   void stopTimer() {
     widget.timer.cancel();
-    stopTimeStamp = DateTime.now();
   }
 
   @override
@@ -32,7 +30,7 @@ class _StartStopButtonState extends State<StartStopButton> {
         ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
         onPressed: () {
           setState(() {
-            widget.timer.isActive ? stopTimer() : widget.startTimer(stopTimeStamp != null ? stopTimeStamp?.millisecondsSinceEpoch : DateTime.now().millisecondsSinceEpoch);
+            widget.timer.isActive ? stopTimer() : widget.startTimer();
             widget.updateFormattedTimeLeftString();
           });
         },

@@ -11,7 +11,7 @@ class _TaskListState extends State<TaskList> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: const [
         Text("Hello from task list"),
       ],
     );
