@@ -91,7 +91,9 @@ class _PomoState extends State<Pomo> {
   }
 
   void decrementTimeStamp(int minutes) {
-    incrementTimeStamp(-minutes);
+    if (pomoLengthSeconds > 0) {
+      incrementTimeStamp(-minutes);
+    }
   }
 
   DateTime getDateTime() {
@@ -107,6 +109,8 @@ class _PomoState extends State<Pomo> {
       box.write("pomoLengthSeconds", 0);
       return true;
     } else {
+      pomoLengthSeconds = getDateTime().difference(DateTime.now()).inSeconds;
+      box.write("pomoLengthSeconds", pomoLengthSeconds);
       return false;
     }
   }
