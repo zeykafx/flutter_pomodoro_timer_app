@@ -1,3 +1,5 @@
+import 'package:enum_to_string/enum_to_string.dart';
+
 enum TaskType {
   done,
   inProgress,
@@ -29,7 +31,7 @@ class Task {
     return {
       "id": id,
       "content": content,
-      "taskType": taskType
+      "taskType": EnumToString.convertToString(taskType)
     };
   }
 }

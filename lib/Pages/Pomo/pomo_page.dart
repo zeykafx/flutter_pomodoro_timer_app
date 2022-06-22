@@ -10,7 +10,8 @@ class PomoPage extends StatelessWidget {
     return Column(
       children: const [
         Pomo(),
-        TaskList(),
+        Divider(),
+        Expanded(child: TaskList()),
       ],
     );
   }

@@ -11,7 +11,6 @@ main() async {
   runApp(const MyApp());
 }
 
-
 const List<Color> colorOptions = [
   Color.fromRGBO(44, 62, 80, 1.0),
   Colors.teal,
@@ -62,7 +61,6 @@ class _MyAppState extends State<MyApp> {
       box.write("DarkMode", newVal);
     });
   }
-
 
   int colorSelected = 0;
 
