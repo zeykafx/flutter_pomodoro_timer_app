@@ -60,6 +60,11 @@ class _TaskInputState extends State<TaskInput> {
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: textEditingController,
+        onTap: () {
+          setState(() {
+            hintIdx = random.nextInt(hintTexts.length);
+          });
+        },
         onSubmitted: (String value) {
           if (kDebugMode) {
             print(value);

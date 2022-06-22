@@ -22,8 +22,10 @@ class _TaskListState extends State<TaskList> {
     super.initState();
   }
 
+  /// loads the saved tasks and parses them
   void loadTasks() {
     taskList.clear();
+
     List<dynamic> tasksJson = box.read("Tasks") ?? [];
     for (Map<String, dynamic> singleTask in tasksJson) {
       Task task = Task(
@@ -35,6 +37,7 @@ class _TaskListState extends State<TaskList> {
     }
   }
 
+  /// used as a callback for the text field
   void taskListCallback(Task task) {
     setState(() {
       taskList.add(task);

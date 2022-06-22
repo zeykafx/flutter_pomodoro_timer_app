@@ -32,7 +32,7 @@ class _PomoState extends State<Pomo> {
   @override
   void initState() {
     super.initState();
-    // resetTimer(1);
+
     getPreviousPomoLength();
     startTimer();
   }
@@ -63,7 +63,7 @@ class _PomoState extends State<Pomo> {
   void startTimer() {
     setState(() {
       endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
-      timer = Timer.periodic(const Duration(milliseconds: 100), (Timer t) {
+      timer = Timer.periodic(const Duration(milliseconds: 300), (Timer t) {
         updateFormattedTimeLeftString();
         if (!isTimerFinished) {
           isTimerFinished = isTimerDone();
@@ -85,7 +85,7 @@ class _PomoState extends State<Pomo> {
     setState(() {
       pomoLengthSeconds += Duration(minutes: minutes).inSeconds;
       box.write("pomoLengthSeconds", pomoLengthSeconds);
-      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds, minutes: minutes)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     });
     updateFormattedTimeLeftString();
   }
@@ -121,9 +121,15 @@ class _PomoState extends State<Pomo> {
 
   String updateFormattedTimeLeftString() {
     Duration timeLeft = getTimeLeft();
-    setState(() {
-      timeLeftString = timeLeft.toString().substring(0, 7);
-    });
+    if (timeLeft.inSeconds >= 0) {
+      setState(() {
+        timeLeftString = timeLeft.toString().substring(0, 7);
+      });
+    } else {
+      setState(() {
+        timer.cancel();
+      });
+    }
     return timeLeftString;
   }
 
