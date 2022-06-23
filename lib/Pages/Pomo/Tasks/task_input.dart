@@ -88,10 +88,12 @@ class _TaskInputState extends State<TaskInput> {
                 });
               },
               onSubmitted: (String value) {
-                Task task = createTask(value);
-                widget.taskListFunction(task);
-                textEditingController.clear();
-                FocusScope.of(context).unfocus();
+                if (value.isNotEmpty) {
+                  Task task = createTask(value);
+                  widget.taskListFunction(task);
+                  textEditingController.clear();
+                  FocusScope.of(context).unfocus();
+                }
               },
               decoration: InputDecoration(
                 // prefixIcon: const Icon(Icons.add),
