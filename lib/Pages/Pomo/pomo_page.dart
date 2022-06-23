@@ -9,9 +9,15 @@ class PomoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: const [
-        Pomo(),
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+          child: Pomo(),
+        ),
         Divider(),
-        Expanded(child: TaskList()),
+        Expanded(child: Padding(
+          padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+          child: TaskList(),
+        )),
       ],
     );
   }

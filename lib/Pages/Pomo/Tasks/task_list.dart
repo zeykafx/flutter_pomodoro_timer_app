@@ -6,6 +6,7 @@ import 'package:flutter_pomodoro_timer_app/main.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import 'task.dart';
 import 'task_input.dart';
@@ -145,6 +146,77 @@ class _TaskListState extends State<TaskList> {
         });
   }
 
+  void editTask(Task task) {
+
+    void incrementNumberOfPomos(int number, void Function(void Function()) setState) {
+      setState(() {
+        task.plannedPomos += number;
+      });
+    }
+
+    void decrementNumberOfPomos(int number, void Function(void Function()) setState) {
+      if (task.plannedPomos > 0) {
+        incrementNumberOfPomos(-number, setState);
+      }
+    }
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Edit task N°${task.id}?"),
+            content: StatefulBuilder(
+              builder: (BuildContext context, void Function(void Function())setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Text("New number of planned pomos:"),
+                    [
+                      InkWell(
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
+                        child: const Icon(Icons.arrow_drop_down),
+                        onTap: () => decrementNumberOfPomos(1, setState),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text("${task.plannedPomos}"),
+                      ),
+                      InkWell(
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
+                        child: const Icon(Icons.arrow_drop_up),
+                        onTap: () => incrementNumberOfPomos(1, setState),
+                      ),
+
+                    ].toRow(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        separator: const Padding(padding: EdgeInsets.all(0))
+                    ),
+                    // text field for new content
+                  ],
+                );
+              }
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel")),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      taskList[taskList.indexOf(task)] = task;
+                    });
+                    updateTasks();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("OK")),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -165,9 +237,8 @@ class _TaskListState extends State<TaskList> {
                       child: ListTile(
                         tileColor: task.taskType == TaskType.inProgress ? Theme.of(context).colorScheme.onSecondary : null,
                         dense: true,
-                        onLongPress: () {
-                          deleteTask(task);
-                        },
+                        onLongPress: () => deleteTask(task),
+                        onTap: () => editTask(task),
                         title: Text(
                           task.content,
                           style: TextStyle(

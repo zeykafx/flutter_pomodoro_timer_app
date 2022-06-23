@@ -149,7 +149,7 @@ class _PomoState extends State<Pomo> {
         [
           Text(
             timeLeftString,
-            style: const TextStyle(fontSize: 40),
+            style: const TextStyle(fontSize: 45),
           ),
           [
             IconButton(
