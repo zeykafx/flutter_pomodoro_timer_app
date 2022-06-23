@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Tasks/task.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/reset_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/start_stop_button.dart';
+import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -26,6 +29,8 @@ class _PomoState extends State<Pomo> {
   late Timer timer;
   bool isTimerFinished = false;
 
+  TimerController timerController = Get.put(TimerController());
+
   final AudioPlayer player = AudioPlayer();
   GetStorage box = GetStorage();
 
@@ -35,6 +40,8 @@ class _PomoState extends State<Pomo> {
 
     getPreviousPomoLength();
     startTimer();
+    updateFormattedTimeLeftString();
+    timer.cancel();
   }
 
   @override
@@ -45,9 +52,7 @@ class _PomoState extends State<Pomo> {
 
   void getPreviousPomoLength() {
     int boxLength = box.read("pomoLengthSeconds") ?? Duration(minutes: defaultMinutes).inSeconds;
-    if (kDebugMode) {
-      print(boxLength);
-    }
+
     if (boxLength > 0) {
       endTimestamp = DateTime.now().add(Duration(seconds: boxLength)).millisecondsSinceEpoch;
       pomoLengthSeconds = boxLength;
@@ -63,6 +68,7 @@ class _PomoState extends State<Pomo> {
   void startTimer() {
     setState(() {
       endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      timerController.changeTimerFinished(false);
       timer = Timer.periodic(const Duration(milliseconds: 1000), (Timer t) {
         updateFormattedTimeLeftString();
         if (!isTimerFinished) {
@@ -78,6 +84,7 @@ class _PomoState extends State<Pomo> {
       pomoLengthSeconds = Duration(minutes: minutes).inSeconds;
       box.write("pomoLengthSeconds", pomoLengthSeconds);
       isTimerFinished = false;
+      timerController.changeTimerFinished(false);
     });
   }
 
@@ -107,6 +114,8 @@ class _PomoState extends State<Pomo> {
       timer.cancel();
       pomoLengthSeconds = 0;
       box.write("pomoLengthSeconds", 0);
+      timerController.changeTimerFinished(true);
+
       return true;
     } else {
       pomoLengthSeconds = getDateTime().difference(DateTime.now()).inSeconds;
@@ -127,7 +136,9 @@ class _PomoState extends State<Pomo> {
       });
     } else {
       setState(() {
-        timer.cancel();
+        // timer.cancel();
+        // timerController.changeTimerFinished(true);
+        isTimerDone();
       });
     }
     return timeLeftString;
