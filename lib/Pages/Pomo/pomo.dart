@@ -63,7 +63,7 @@ class _PomoState extends State<Pomo> {
   void startTimer() {
     setState(() {
       endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
-      timer = Timer.periodic(const Duration(milliseconds: 300), (Timer t) {
+      timer = Timer.periodic(const Duration(milliseconds: 1000), (Timer t) {
         updateFormattedTimeLeftString();
         if (!isTimerFinished) {
           isTimerFinished = isTimerDone();

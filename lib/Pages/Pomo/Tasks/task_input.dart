@@ -38,15 +38,13 @@ class _TaskInputState extends State<TaskInput> {
 
   Task createTask(String textFieldValue) {
     List<dynamic> tasksJson = box.read("Tasks") ?? [];
-    if (kDebugMode) {
-      print(tasksJson);
-    }
 
     Task newTask = Task(
-        id: tasksJson.isNotEmpty ? tasksJson.last["id"] : 0,
+        id: tasksJson.isNotEmpty ? tasksJson.last["id"] + 1 : 0,
         content: textFieldValue,
         taskType: TaskType.notStarted
     );
+
     // add the new task to the list in the 'json' format and write that to the box
     tasksJson.add(newTask.toJson());
     box.write("Tasks", tasksJson);
@@ -71,11 +69,22 @@ class _TaskInputState extends State<TaskInput> {
           }
           Task task = createTask(value);
           widget.taskListFunction(task);
+          textEditingController.clear();
         },
         decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.add),
             border: const OutlineInputBorder(),
             hintText: hintTexts[hintIdx],
-            labelText: "Enter a task"
+            labelText: "Enter a task",
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () {
+                Task task = createTask(textEditingController.text);
+                widget.taskListFunction(task);
+                textEditingController.clear();
+              },
+              tooltip: "Done",
+            ),
         ),
       ),
     );
