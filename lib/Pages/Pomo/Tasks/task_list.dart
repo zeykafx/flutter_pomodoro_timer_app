@@ -163,44 +163,47 @@ class _TaskListState extends State<TaskList> {
                   itemCount: taskList.length,
                   itemBuilder: (BuildContext context, int index) {
                     Task task = taskList[index];
-                    return ListTile(
-                      tileColor: task.taskType == TaskType.inProgress ? Theme.of(context).colorScheme.onSecondary : null,
-                      dense: true,
-                      onLongPress: () {
-                        deleteTask(task);
-                      },
-                      title: Text(
-                        task.content,
-                        style: TextStyle(
-                            decoration: task.taskType == TaskType.done ? TextDecoration.lineThrough : TextDecoration.none,
-                            decorationThickness: 3,
-                            decorationColor: Theme.of(context).colorScheme.primary),
-                      ),
-                      leading: task.plannedPomos > 0 ? Text("${task.pomosDone}/${task.plannedPomos}") : null,
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton.icon(
-                              onPressed: () {
-                                if (task.taskType == TaskType.notStarted) {
-                                  setState(() {
-                                    task.changeType(TaskType.inProgress);
-                                  });
-                                } else if (task.taskType == TaskType.inProgress) {
-                                  setState(() {
-                                    task.changeType(TaskType.done);
-                                  });
-                                } else {
-                                  setState(() {
-                                    task.changeType(TaskType.notStarted);
-                                  });
-                                }
+                    return GestureDetector(
+                      onSecondaryTap: () => deleteTask(task),
+                      child: ListTile(
+                        tileColor: task.taskType == TaskType.inProgress ? Theme.of(context).colorScheme.onSecondary : null,
+                        dense: true,
+                        onLongPress: () {
+                          deleteTask(task);
+                        },
+                        title: Text(
+                          task.content,
+                          style: TextStyle(
+                              decoration: task.taskType == TaskType.done ? TextDecoration.lineThrough : TextDecoration.none,
+                              decorationThickness: 3,
+                              decorationColor: Theme.of(context).colorScheme.primary),
+                        ),
+                        leading: task.plannedPomos > 0 ? Text("${task.pomosDone}/${task.plannedPomos}") : null,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ElevatedButton.icon(
+                                onPressed: () {
+                                  if (task.taskType == TaskType.notStarted) {
+                                    setState(() {
+                                      task.changeType(TaskType.inProgress);
+                                    });
+                                  } else if (task.taskType == TaskType.inProgress) {
+                                    setState(() {
+                                      task.changeType(TaskType.done);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      task.changeType(TaskType.notStarted);
+                                    });
+                                  }
 
-                                updateTasks();
-                              },
-                              icon: Icon(task.taskType == TaskType.notStarted ? FontAwesome5.hourglass_start : task.taskType == TaskType.inProgress ? Icons.check : Icons.restart_alt),
-                              label: Text(task.taskType == TaskType.notStarted ? "Start" : task.taskType == TaskType.inProgress ? "Done" : "Restart")),
-                        ],
+                                  updateTasks();
+                                },
+                                icon: Icon(task.taskType == TaskType.notStarted ? FontAwesome5.hourglass_start : task.taskType == TaskType.inProgress ? Icons.check : Icons.restart_alt, size: 15),
+                                label: Text(task.taskType == TaskType.notStarted ? "Start" : task.taskType == TaskType.inProgress ? "Done" : "Restart")),
+                          ],
+                        ),
                       ),
                     );
                   })
