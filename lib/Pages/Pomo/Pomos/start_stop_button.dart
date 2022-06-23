@@ -25,8 +25,6 @@ class _StartStopButtonState extends State<StartStopButton> {
     widget.timer.cancel();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(

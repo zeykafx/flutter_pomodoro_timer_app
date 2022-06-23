@@ -22,6 +22,8 @@ class _TaskListState extends State<TaskList> {
   GetStorage box = GetStorage();
   List<Task> taskList = [];
   TimerController timerController = Get.put(TimerController());
+  TextEditingController textEditingController = TextEditingController();
+
 
   @override
   void initState() {
@@ -147,6 +149,7 @@ class _TaskListState extends State<TaskList> {
   }
 
   void editTask(Task task) {
+    textEditingController.text = task.content;
 
     void incrementNumberOfPomos(int number, void Function(void Function()) setState) {
       setState(() {
@@ -187,12 +190,34 @@ class _TaskListState extends State<TaskList> {
                         child: const Icon(Icons.arrow_drop_up),
                         onTap: () => incrementNumberOfPomos(1, setState),
                       ),
-
                     ].toRow(
                         mainAxisAlignment: MainAxisAlignment.center,
                         separator: const Padding(padding: EdgeInsets.all(0))
                     ),
                     // text field for new content
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: textEditingController,
+                        // onSubmitted: (String value) {
+                          // if (value.isNotEmpty) {
+                          //   setState(() {
+                          //     task.content = value;
+                          //     taskList[taskList.indexOf(task)] = task;
+                          //   });
+                          //   // textEditingController.clear();
+                          //   // FocusScope.of(context).unfocus();
+                          //   // Navigator.of(context).pop();
+                          //   updateTasks();
+                          // }
+                        // },
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Enter new task content",
+                          labelText: "Enter new task content",
+                        ),
+                      ),
+                    ),
                   ],
                 );
               }
@@ -206,6 +231,7 @@ class _TaskListState extends State<TaskList> {
               TextButton(
                   onPressed: () {
                     setState(() {
+                      task.content = textEditingController.text;
                       taskList[taskList.indexOf(task)] = task;
                     });
                     updateTasks();
