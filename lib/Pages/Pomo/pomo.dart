@@ -41,7 +41,7 @@ class _PomoState extends State<Pomo> {
     getPreviousPomoLength();
     startTimer();
     updateFormattedTimeLeftString();
-    timer.cancel();
+    // timer.cancel();
   }
 
   @override
@@ -136,9 +136,9 @@ class _PomoState extends State<Pomo> {
       });
     } else {
       setState(() {
-        // timer.cancel();
+        timer.cancel();
         // timerController.changeTimerFinished(true);
-        isTimerDone();
+        // isTimerDone();
       });
     }
     return timeLeftString;

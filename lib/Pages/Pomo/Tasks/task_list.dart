@@ -33,9 +33,11 @@ class _TaskListState extends State<TaskList> {
         for (Task task in taskList) {
           if (task.taskType == TaskType.inProgress) {
 
-            setState(() {
-              task.pomosDone++;
-            });
+            if (mounted) {
+              setState(() {
+                task.pomosDone++;
+              });
+            }
             // if (task.pomosDone == task.plannedPomos) {
             //   task.changeType(TaskType.done);
             // }
@@ -113,6 +115,39 @@ class _TaskListState extends State<TaskList> {
         });
   }
 
+  void deleteTask(Task task) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Delete task N°${task.id}?"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Do you really want to delete this task?"),
+                Text("\"${task.content}\"")
+              ],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel")),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      taskList.remove(task);
+                    });
+                    Navigator.of(context).pop();
+                   updateTasks();
+                  },
+                  child: const Text("OK")),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -130,6 +165,10 @@ class _TaskListState extends State<TaskList> {
                     Task task = taskList[index];
                     return ListTile(
                       tileColor: task.taskType == TaskType.inProgress ? Theme.of(context).colorScheme.onSecondary : null,
+                      dense: true,
+                      onLongPress: () {
+                        deleteTask(task);
+                      },
                       title: Text(
                         task.content,
                         style: TextStyle(

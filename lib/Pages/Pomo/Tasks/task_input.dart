@@ -91,6 +91,7 @@ class _TaskInputState extends State<TaskInput> {
                 Task task = createTask(value);
                 widget.taskListFunction(task);
                 textEditingController.clear();
+                FocusScope.of(context).unfocus();
               },
               decoration: InputDecoration(
                 // prefixIcon: const Icon(Icons.add),
@@ -137,6 +138,7 @@ class _TaskInputState extends State<TaskInput> {
                 Task task = createTask(textEditingController.text);
                 widget.taskListFunction(task);
                 textEditingController.clear();
+                FocusScope.of(context).unfocus();
               }
             },
 
