@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.dark,
         textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
       ),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: SafeArea(top: true, child: Main(
           title: 'Pomo Focus',
           darkModeEnabled: darkModeEnabled,

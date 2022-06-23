@@ -40,6 +40,10 @@ class SiteBlocker {
       });
       return true;
     } catch (e) {
+      Get.snackbar(
+        "Error",
+        e.toString(),
+      );
       e.printError();
       return false;
     }

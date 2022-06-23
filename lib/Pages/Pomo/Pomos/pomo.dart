@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/reset_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/start_stop_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
+import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -18,7 +19,7 @@ class Pomo extends StatefulWidget {
 }
 
 class _PomoState extends State<Pomo> {
-  int defaultMinutes = 45;
+  SettingsController settingsController = Get.put(SettingsController());
 
   int pomoLengthSeconds = 0;
 
@@ -49,7 +50,7 @@ class _PomoState extends State<Pomo> {
   }
 
   void getPreviousPomoLength() {
-    int boxLength = box.read("pomoLengthSeconds") ?? Duration(minutes: defaultMinutes).inSeconds;
+    int boxLength = box.read("pomoLengthSeconds") ?? Duration(minutes: settingsController.defaultMinutes.value).inSeconds;
 
     if (boxLength > 0) {
       endTimestamp = DateTime.now().add(Duration(seconds: boxLength)).millisecondsSinceEpoch;
@@ -178,7 +179,7 @@ class _PomoState extends State<Pomo> {
               updateFormattedTimeLeftString: updateFormattedTimeLeftString
           ).paddingAll(5),
           ResetButton(
-            defaultMinutes: defaultMinutes,
+            defaultMinutes: settingsController.defaultMinutes.value,
             updateFormattedTimeLeftString: updateFormattedTimeLeftString,
             resetTimer: resetTimer,
           ).paddingAll(5),
