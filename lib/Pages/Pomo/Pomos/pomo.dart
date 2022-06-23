@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Tasks/task.dart';
-import 'package:flutter_pomodoro_timer_app/Pages/Pomo/reset_button.dart';
-import 'package:flutter_pomodoro_timer_app/Pages/Pomo/start_stop_button.dart';
+import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/reset_button.dart';
+import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/start_stop_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';

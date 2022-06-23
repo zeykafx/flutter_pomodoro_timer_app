@@ -26,9 +26,6 @@ class _TaskListState extends State<TaskList> {
   void initState() {
     loadTasks();
     timerController.timerFinished.listen((bool newVal) {
-      if (kDebugMode) {
-        print(newVal);
-      }
       if (newVal) {
         for (Task task in taskList) {
           if (task.taskType == TaskType.inProgress) {

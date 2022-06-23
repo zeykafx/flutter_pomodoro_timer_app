@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pomodoro_timer_app/Pages/Pomo/pomo.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
