@@ -1,18 +1,12 @@
 import 'dart:io';
 
 import 'package:get/get.dart';
-import 'package:get/utils.dart';
 
 class SiteBlocker {
   File file = File("c:/windows/system32/drivers/etc/hosts");
 
-  // SiteBlocker() {
-  //   file.readAsString().then((String content) {
-  //     print(content);
-  //   });
-  // }
 
-  bool blockSites(List<String> sites) {
+  bool blockSites(List sites) {
     try {
       for (String site in sites) {
         // adding a www. in front if the site didn't have it

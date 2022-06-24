@@ -5,7 +5,7 @@ class SettingsController extends GetxController {
   GetStorage box = GetStorage();
 
   RxBool blockSite = false.obs;
-  RxList<String> sitesToBlock = <String>[].obs;
+  RxList sitesToBlock = [].obs;
 
   RxInt defaultMinutes = 45.obs;
 
@@ -13,6 +13,12 @@ class SettingsController extends GetxController {
     blockSite.value = box.read("BlockSite") ?? false;
     blockSite.listen((bool val) {
       box.write("BlockSite", val);
+    });
+
+    List boxVal = box.read("sitesToBlock");
+    sitesToBlock.value = boxVal;
+    sitesToBlock.listen((var newVal) {
+      box.write("sitesToBlock", newVal);
     });
   }
 }
