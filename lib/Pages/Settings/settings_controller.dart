@@ -15,7 +15,7 @@ class SettingsController extends GetxController {
       box.write("BlockSite", val);
     });
 
-    List boxVal = box.read("sitesToBlock");
+    List boxVal = box.read("sitesToBlock") ?? [];
     sitesToBlock.value = boxVal;
     sitesToBlock.listen((var newVal) {
       box.write("sitesToBlock", newVal);
