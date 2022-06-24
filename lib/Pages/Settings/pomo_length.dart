@@ -43,7 +43,7 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           [
             InkWell(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: const Icon(Icons.arrow_drop_down, size: 40),
+              child: const Icon(Icons.arrow_drop_down, size: 45),
               onTap: () => settingsController.defaultMinutes--,
             ),
             Padding(
@@ -78,18 +78,23 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
             ),
             InkWell(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: const Icon(Icons.arrow_drop_up, size: 40),
+              child: const Icon(Icons.arrow_drop_up, size: 45),
               onTap: () => settingsController.defaultMinutes++,
             ),
-            ElevatedButton.icon(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton.icon(
               onPressed: () {
                 settingsController.defaultMinutes.value = int.parse(textEditingController.text);
-                Get.snackbar("Saved!", "Saved default pomodoro length to ${settingsController.defaultMinutes} minutes",
+                Get.snackbar(
+                    "Saved!",
+                    "Saved default pomodoro length to ${settingsController.defaultMinutes} minutes",
                     padding: const EdgeInsets.all(8.0));
               },
               label: const Text("Save"),
               icon: const Icon(FontAwesome5.save, size: 15),
-            )
+            ),)
+
           ].toRow(mainAxisAlignment: MainAxisAlignment.center),
         ],
       ),

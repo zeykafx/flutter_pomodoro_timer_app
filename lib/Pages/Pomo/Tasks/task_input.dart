@@ -111,7 +111,7 @@ class _TaskInputState extends State<TaskInput> {
                 [
                   InkWell(
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    child: const Icon(Icons.arrow_drop_down),
+                    child: const Icon(Icons.arrow_drop_down, size: 35),
                     onTap: () => decrementNumberOfPomos(1),
                   ),
                   Padding(
@@ -120,7 +120,7 @@ class _TaskInputState extends State<TaskInput> {
                   ),
                   InkWell(
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    child: const Icon(Icons.arrow_drop_up),
+                    child: const Icon(Icons.arrow_drop_up, size: 35),
                       onTap: () => incrementNumberOfPomos(1),
                   ),
 

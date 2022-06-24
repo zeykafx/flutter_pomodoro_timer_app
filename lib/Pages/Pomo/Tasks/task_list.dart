@@ -178,7 +178,7 @@ class _TaskListState extends State<TaskList> {
                     [
                       InkWell(
                         borderRadius: const BorderRadius.all(Radius.circular(20)),
-                        child: const Icon(Icons.arrow_drop_down),
+                        child: const Icon(Icons.arrow_drop_down, size: 40),
                         onTap: () => decrementNumberOfPomos(1, setState),
                       ),
                       Padding(
@@ -187,7 +187,7 @@ class _TaskListState extends State<TaskList> {
                       ),
                       InkWell(
                         borderRadius: const BorderRadius.all(Radius.circular(20)),
-                        child: const Icon(Icons.arrow_drop_up),
+                        child: const Icon(Icons.arrow_drop_up, size: 40),
                         onTap: () => incrementNumberOfPomos(1, setState),
                       ),
                     ].toRow(

@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 class SiteBlocker {
   File file = File("c:/windows/system32/drivers/etc/hosts");
 
-
   bool blockSites(List sites) {
     try {
       for (String site in sites) {
