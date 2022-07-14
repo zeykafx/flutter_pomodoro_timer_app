@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Tasks/task.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -32,6 +33,8 @@ class _TaskInputState extends State<TaskInput> {
   late int hintIdx;
   GetStorage box = GetStorage();
   int numberOfPomos = 0;
+
+  int columnWidth = 500;
 
   @override
   void initState() {
@@ -73,14 +76,25 @@ class _TaskInputState extends State<TaskInput> {
     }
   }
 
+  Widget wrapInExpanded(Widget widgetToWrap, double width) {
+    if (width < columnWidth) {
+      return widgetToWrap;
+    } else {
+      return Expanded(child: widgetToWrap);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Size mediaQuerySize = MediaQuery.of(context).size;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
+      child: Flex(
+        direction: mediaQuerySize.width < columnWidth ? Axis.vertical : Axis.horizontal,
         children: [
-          Expanded(
-            child: TextField(
+          wrapInExpanded(
+            TextField(
               controller: textEditingController,
               onTap: () {
                 setState(() {
@@ -102,49 +116,60 @@ class _TaskInputState extends State<TaskInput> {
                 labelText: "Enter a task",
               ),
             ),
+              mediaQuerySize.width
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-            child: Column(
-              children: [
-                const Text("N° of pomos"),
-                [
-                  InkWell(
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    child: const Icon(Icons.arrow_drop_down, size: 35),
-                    onTap: () => decrementNumberOfPomos(1),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text("$numberOfPomos"),
-                  ),
-                  InkWell(
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    child: const Icon(Icons.arrow_drop_up, size: 35),
-                      onTap: () => incrementNumberOfPomos(1),
-                  ),
 
-                ].toRow(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    separator: const Padding(padding: EdgeInsets.all(0))
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                  child: Column(
+                    children: [
+                      const Text("N° of pomos"),
+                      [
+                        InkWell(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          child: const Icon(Icons.arrow_drop_down, size: 45),
+                          onTap: () => decrementNumberOfPomos(1),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text("$numberOfPomos"),
+                        ),
+                        InkWell(
+                          borderRadius: const BorderRadius.all(Radius.circular(30)),
+                          child: const Icon(Icons.arrow_drop_up, size: 45),
+                          onTap: () => incrementNumberOfPomos(1),
+                        ),
+
+                      ].toRow(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          separator: const Padding(padding: EdgeInsets.all(0))
+                      ),
+                    ],
+                  ),
+                ),
+
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.add),
+                  label: const Text("Add"),
+                  onPressed: () {
+                    if (textEditingController.text.isNotEmpty) {
+                      Task task = createTask(textEditingController.text);
+                      widget.taskListFunction(task);
+                      textEditingController.clear();
+                      FocusScope.of(context).unfocus();
+                    }
+                  },
+
                 ),
               ],
             ),
           ),
 
-          ElevatedButton.icon(
-            icon: const Icon(Icons.add),
-            label: const Text("Add"),
-            onPressed: () {
-              if (textEditingController.text.isNotEmpty) {
-                Task task = createTask(textEditingController.text);
-                widget.taskListFunction(task);
-                textEditingController.clear();
-                FocusScope.of(context).unfocus();
-              }
-            },
-
-          ),
         ],
       ),
     );

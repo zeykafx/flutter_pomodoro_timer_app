@@ -54,6 +54,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+
   void changeDarModeEnabled(bool newVal) {
     setState(() {
       darkModeEnabled = newVal;
@@ -87,7 +88,7 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.dark,
         textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
       ),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       home: SafeArea(top: true, child: Main(
           title: 'Pomo Focus',
           darkModeEnabled: darkModeEnabled,
@@ -120,21 +121,31 @@ class Main extends StatefulWidget {
 
 class _MainState extends State<Main> {
   int _selectedIndex = 0;
+  bool pageChanged = false;
+
+  @override
+  void dispose() {
+    setState(() {
+      pageChanged = false;
+    });
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      pageChanged = true;
     });
   }
 
   Widget createScreen(int index) {
     switch(index) {
       case 0:
-        return const PomoPage();
+        return PomoPage(pageChanged: pageChanged);
       case 1:
         return const SettingsPage();
       default:
-        return const PomoPage();
+        return PomoPage(pageChanged: pageChanged);
     }
   }
 
@@ -143,8 +154,8 @@ class _MainState extends State<Main> {
     return Scaffold(
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
+          // splashColor: Colors.transparent,
+          // highlightColor: Colors.transparent,
           // hoverColor: Colors.transparent
         ),
         child: NavigationBar(

@@ -2,7 +2,6 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
-import 'package:flutter_pomodoro_timer_app/main.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -120,7 +119,7 @@ class _TaskListState extends State<TaskList> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Delete task N°${task.id}?"),
+            title: Text("Delete task N°${task.id+1}?"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -167,7 +166,7 @@ class _TaskListState extends State<TaskList> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Edit task N°${task.id}?"),
+            title: Text("Edit task N°${task.id+1}?"),
             content: StatefulBuilder(
               builder: (BuildContext context, void Function(void Function())setState) {
                 return Column(
@@ -199,18 +198,6 @@ class _TaskListState extends State<TaskList> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
                         controller: textEditingController,
-                        // onSubmitted: (String value) {
-                          // if (value.isNotEmpty) {
-                          //   setState(() {
-                          //     task.content = value;
-                          //     taskList[taskList.indexOf(task)] = task;
-                          //   });
-                          //   // textEditingController.clear();
-                          //   // FocusScope.of(context).unfocus();
-                          //   // Navigator.of(context).pop();
-                          //   updateTasks();
-                          // }
-                        // },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: "Enter new task content",

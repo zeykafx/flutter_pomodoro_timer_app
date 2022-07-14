@@ -12,7 +12,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class Pomo extends StatefulWidget {
-  const Pomo({Key? key}) : super(key: key);
+  const Pomo({Key? key, required this.pageChanged}) : super(key: key);
+
+  final bool pageChanged;
 
   @override
   State<Pomo> createState() => _PomoState();
@@ -40,7 +42,9 @@ class _PomoState extends State<Pomo> {
     getPreviousPomoLength();
     startTimer();
     updateFormattedTimeLeftString();
-    // timer.cancel();
+    if (widget.pageChanged == false) {
+      timer.cancel();
+    }
   }
 
   @override

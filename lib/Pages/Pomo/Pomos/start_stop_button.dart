@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/site_blocker.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
@@ -22,7 +23,9 @@ class _StartStopButtonState extends State<StartStopButton> {
   SettingsController settingsController = Get.put(SettingsController());
 
   void stopTimer() {
-    widget.timer.cancel();
+    // setState(() {
+      widget.timer.cancel();
+    // });
   }
 
   @override
@@ -39,17 +42,21 @@ class _StartStopButtonState extends State<StartStopButton> {
             // if the timer is currently running and the button is pressed, then stop the timer and unblock the sites (if enabled by the user on windows)
             if (widget.timer.isActive) {
               stopTimer();
-              if (Platform.isWindows && settingsController.blockSite.isTrue) {
-                siteBlocker.unblockSites();
+              if (!kIsWeb) {
+                if (Platform.isWindows && settingsController.blockSite.isTrue) {
+                  siteBlocker.unblockSites();
+                }
               }
+
             } else {
               // else start the timer and block the sites in the list
               widget.startTimer();
-              if (Platform.isWindows && settingsController.blockSite.isTrue) {
-                siteBlocker.blockSites(settingsController.sitesToBlock);
+              if (!kIsWeb) {
+                if (Platform.isWindows && settingsController.blockSite.isTrue) {
+                  siteBlocker.blockSites(settingsController.sitesToBlock);
+                }
               }
             }
-            // widget.timer.isActive ? stopTimer() : widget.startTimer();
             widget.updateFormattedTimeLeftString();
 
           });
