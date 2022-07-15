@@ -10,8 +10,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        Padding(
+      children: [
+        const Padding(
           padding: EdgeInsets.all(8.0),
           child: Text(
             "Settings",
@@ -19,13 +19,13 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
 
-        PomoLengthSettings(
+        const PomoLengthSettings(
           key: ValueKey("LengthSettings")
         ),
 
         if (!kIsWeb)
           if (Platform.isWindows)
-            SiteBlockerSettings(
+            const SiteBlockerSettings(
               key: ValueKey("SiteBlockerSettings")
             ),
       ],
