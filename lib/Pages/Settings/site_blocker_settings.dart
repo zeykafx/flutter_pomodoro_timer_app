@@ -88,8 +88,9 @@ class _SiteBlockerSettingsState extends State<SiteBlockerSettings> {
                     // settingsController.defaultMinutes.value = int.parse(textEditingController.text);
                     List<String> sites = siteToBlockController.text.split(", ");
                     settingsController.sitesToBlock.value = sites;
-                    Get.snackbar("Saved!", "Saved sites to block!",
-                        padding: const EdgeInsets.all(8.0));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved sites to block!"),));
+                    // Get.snackbar("Saved!", "Saved sites to block!",
+                    //     padding: const EdgeInsets.all(8.0));
                   },
                   label: const Text("Save"),
                   icon: const Icon(FontAwesome5.save, size: 15),

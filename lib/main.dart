@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'Pages/Pomo/pomo_page.dart';
 import 'Pages/Settings/settings_page.dart';
 
@@ -32,7 +33,6 @@ const List<String> colorText = <String>[
   "Red",
 ];
 
-
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -53,7 +53,6 @@ class _MyAppState extends State<MyApp> {
     colorSelected = box.read("colorSelected") ?? 0;
     super.initState();
   }
-
 
   void changeDarModeEnabled(bool newVal) {
     setState(() {
@@ -89,25 +88,28 @@ class _MyAppState extends State<MyApp> {
         textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
       ),
       themeMode: ThemeMode.light,
-      home: SafeArea(top: true, child: Main(
-          title: 'Pomo Focus',
-          darkModeEnabled: darkModeEnabled,
-          changeDarModeEnabled: changeDarModeEnabled,
-          changeColorSelected: changeColorSelected,
-          colorSelected: colorSelected,
-      )),
+      home: SafeArea(
+          top: true,
+          child: Main(
+            title: 'Pomo Focus',
+            darkModeEnabled: darkModeEnabled,
+            changeDarModeEnabled: changeDarModeEnabled,
+            changeColorSelected: changeColorSelected,
+            colorSelected: colorSelected,
+          )),
     );
   }
 }
 
 class Main extends StatefulWidget {
-  const Main({Key? key,
-    required this.title,
-    required this.darkModeEnabled,
-    required this.changeDarModeEnabled,
-    required this.changeColorSelected,
-    required this.colorSelected
-  }) : super(key: key);
+  const Main(
+      {Key? key,
+      required this.title,
+      required this.darkModeEnabled,
+      required this.changeDarModeEnabled,
+      required this.changeColorSelected,
+      required this.colorSelected})
+      : super(key: key);
 
   final String title;
   final bool darkModeEnabled;
@@ -139,7 +141,7 @@ class _MainState extends State<Main> {
   }
 
   Widget createScreen(int index) {
-    switch(index) {
+    switch (index) {
       case 0:
         return PomoPage(pageChanged: pageChanged);
       case 1:
@@ -154,10 +156,10 @@ class _MainState extends State<Main> {
     return Scaffold(
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          // splashColor: Colors.transparent,
-          // highlightColor: Colors.transparent,
-          // hoverColor: Colors.transparent
-        ),
+            // splashColor: Colors.transparent,
+            // highlightColor: Colors.transparent,
+            // hoverColor: Colors.transparent
+            ),
         child: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onItemTapped,
@@ -186,12 +188,15 @@ class _MainState extends State<Main> {
                     widget.changeDarModeEnabled(Get.isDarkMode);
                   });
                 },
-                icon: widget.darkModeEnabled ? const Icon(Icons.dark_mode, color: Colors.black, size: 18) : const Icon(Icons.sunny, color: Colors.white, size: 18)),
+                icon: widget.darkModeEnabled
+                    ? const Icon(Icons.dark_mode, color: Colors.black, size: 18)
+                    : const Icon(Icons.sunny, color: Colors.white, size: 18)),
           ),
           PopupMenuButton(
-            icon: const Icon(Icons.more_vert),
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            tooltip: "Show color menu",
+            icon: const Icon(Icons.color_lens),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
             itemBuilder: (context) {
               return List.generate(colorOptions.length, (index) {
                 return PopupMenuItem(
@@ -201,15 +206,11 @@ class _MainState extends State<Main> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Icon(
-                            index == widget.colorSelected
-                                ? Icons.color_lens
-                                : Icons.color_lens_outlined,
+                            index == widget.colorSelected ? Icons.color_lens : Icons.color_lens_outlined,
                             color: colorOptions[index],
                           ),
                         ),
-                        Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(colorText[index]))
+                        Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index]))
                       ],
                     ));
               });

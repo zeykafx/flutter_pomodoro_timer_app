@@ -86,10 +86,11 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
               child: ElevatedButton.icon(
               onPressed: () {
                 settingsController.defaultMinutes.value = int.parse(textEditingController.text);
-                Get.snackbar(
-                    "Saved!",
-                    "Saved default pomodoro length to ${settingsController.defaultMinutes} minutes",
-                    padding: const EdgeInsets.all(8.0));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Saved default pomodoro length to ${settingsController.defaultMinutes} minutes")));
+                // Get.snackbar(
+                //     "Saved!",
+                //     "Saved default pomodoro length to ${settingsController.defaultMinutes} minutes",
+                //     padding: const EdgeInsets.all(8.0));
               },
               label: const Text("Save"),
               icon: const Icon(FontAwesome5.save, size: 15),

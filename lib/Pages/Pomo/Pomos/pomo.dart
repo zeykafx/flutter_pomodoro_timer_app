@@ -180,7 +180,9 @@ class _PomoState extends State<Pomo> {
           StartStopButton(
               timer: timer,
               startTimer: startTimer,
-              updateFormattedTimeLeftString: updateFormattedTimeLeftString
+              updateFormattedTimeLeftString: updateFormattedTimeLeftString,
+              resetTimer: resetTimer,
+              getTimeLeft: getTimeLeft
           ).paddingAll(5),
           ResetButton(
             defaultMinutes: settingsController.defaultMinutes.value,
