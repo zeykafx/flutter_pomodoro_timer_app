@@ -42,7 +42,7 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           const Divider(),
           [
             InkWell(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              borderRadius: const BorderRadius.all(Radius.circular(30)),
               child: const Icon(Icons.arrow_drop_down, size: 45),
               onTap: () => settingsController.defaultMinutes--,
             ),
@@ -77,7 +77,7 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
               ),
             ),
             InkWell(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              borderRadius: const BorderRadius.all(Radius.circular(30)),
               child: const Icon(Icons.arrow_drop_up, size: 45),
               onTap: () => settingsController.defaultMinutes++,
             ),
