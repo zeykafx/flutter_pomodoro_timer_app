@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
@@ -47,7 +48,7 @@ class _PomoState extends State<Pomo> {
     updateFormattedTimeLeftString();
     if (widget.pageChanged == false) {
       timer.cancel();
-      if (!kIsWeb) {
+      if (!kIsWeb && !Platform.isWindows) {
         flutterLocalNotificationsPlugin.cancelAll();
       }
     }
@@ -75,7 +76,7 @@ class _PomoState extends State<Pomo> {
   }
 
   void startTimer() {
-    if (!kIsWeb) {
+    if (!kIsWeb && !Platform.isWindows) {
       flutterLocalNotificationsPlugin.cancelAll();
     }
     setState(() {
@@ -88,7 +89,7 @@ class _PomoState extends State<Pomo> {
         }
       });
     });
-    if (!kIsWeb) {
+    if (!kIsWeb && !Platform.isWindows) {
       _showNotificationWithChronometer();
     }
 
@@ -139,7 +140,7 @@ class _PomoState extends State<Pomo> {
       box.write("pomoLengthSeconds", pomoLengthSeconds);
       isTimerFinished = false;
       timerController.changeTimerFinished(false);
-      if (!kIsWeb) {
+      if (!kIsWeb && !Platform.isWindows) {
         flutterLocalNotificationsPlugin.cancelAll();
         _showNotificationWithChronometer();
       }
@@ -154,7 +155,7 @@ class _PomoState extends State<Pomo> {
       endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     });
     updateFormattedTimeLeftString();
-    if (!kIsWeb) {
+    if (!kIsWeb && !Platform.isWindows) {
       flutterLocalNotificationsPlugin.cancelAll();
       _showNotificationWithChronometer();
     }
@@ -176,7 +177,7 @@ class _PomoState extends State<Pomo> {
     if (DateTime.now().compareTo(timestampDate) >= 0) {
       player.play(AssetSource("audio/notification_sound.mp3"));
       timer.cancel();
-      if (!kIsWeb) {
+      if (!kIsWeb && !Platform.isWindows) {
         flutterLocalNotificationsPlugin.cancelAll();
         showTimerFinishedNotification();
       }

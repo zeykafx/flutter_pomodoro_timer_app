@@ -267,6 +267,7 @@ class _MainState extends State<Main> {
       body: SizedBox.expand(
           child: PageView(
             controller: pageController,
+            allowImplicitScrolling: true,
             onPageChanged: (index) {
               setState(() {
                 _selectedIndex = index;
