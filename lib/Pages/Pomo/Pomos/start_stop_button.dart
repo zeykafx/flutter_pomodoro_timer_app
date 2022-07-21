@@ -39,7 +39,9 @@ class _StartStopButtonState extends State<StartStopButton> {
   void stopTimer() {
     // setState(() {
     widget.timer.cancel();
-    flutterLocalNotificationsPlugin.cancelAll();
+    if (!kIsWeb) {
+      flutterLocalNotificationsPlugin.cancelAll();
+    }
     // });
   }
 

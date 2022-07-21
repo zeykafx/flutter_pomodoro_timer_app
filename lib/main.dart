@@ -65,13 +65,12 @@ class _MyAppState extends State<MyApp> {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
     const InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid,
+      android: initializationSettingsAndroid,
     );
     await flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
         onSelectNotification: selectNotification
     );
-
   }
 
   void selectNotification(String? payload) async {
@@ -106,13 +105,17 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
         colorSchemeSeed: colorOptions[colorSelected],
         brightness: Brightness.light,
-        textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme),
+        textTheme: GoogleFonts.poppinsTextTheme(ThemeData
+            .light()
+            .textTheme),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: colorOptions[colorSelected],
         brightness: Brightness.dark,
-        textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+        textTheme: GoogleFonts.poppinsTextTheme(ThemeData
+            .dark()
+            .textTheme),
       ),
       themeMode: ThemeMode.light,
       home: SafeArea(
@@ -129,13 +132,12 @@ class _MyAppState extends State<MyApp> {
 }
 
 class Main extends StatefulWidget {
-  const Main(
-      {Key? key,
-      required this.title,
-      required this.darkModeEnabled,
-      required this.changeDarModeEnabled,
-      required this.changeColorSelected,
-      required this.colorSelected})
+  const Main({Key? key,
+    required this.title,
+    required this.darkModeEnabled,
+    required this.changeDarModeEnabled,
+    required this.changeColorSelected,
+    required this.colorSelected})
       : super(key: key);
 
   final String title;
@@ -152,11 +154,20 @@ class _MainState extends State<Main> {
   int _selectedIndex = 0;
   bool pageChanged = false;
 
+  late PageController pageController;
+
+  @override
+  void initState() {
+    pageController = PageController();
+    super.initState();
+  }
+
   @override
   void dispose() {
     setState(() {
       pageChanged = false;
     });
+    pageController.dispose();
     super.dispose();
   }
 
@@ -164,6 +175,10 @@ class _MainState extends State<Main> {
     setState(() {
       _selectedIndex = index;
       pageChanged = true;
+      pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut);
     });
   }
 
@@ -183,10 +198,10 @@ class _MainState extends State<Main> {
     return Scaffold(
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-            // splashColor: Colors.transparent,
-            // highlightColor: Colors.transparent,
-            // hoverColor: Colors.transparent
-            ),
+          // splashColor: Colors.transparent,
+          // highlightColor: Colors.transparent,
+          // hoverColor: Colors.transparent
+        ),
         child: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onItemTapped,
@@ -223,7 +238,10 @@ class _MainState extends State<Main> {
             tooltip: "Show color menu",
             icon: const Icon(Icons.color_lens),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
+                borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme
+                .of(context)
+                .colorScheme
+                .secondaryContainer, width: 0.3)),
             itemBuilder: (context) {
               return List.generate(colorOptions.length, (index) {
                 return PopupMenuItem(
@@ -246,7 +264,20 @@ class _MainState extends State<Main> {
           )
         ],
       ),
-      body: createScreen(_selectedIndex),
+      body: SizedBox.expand(
+          child: PageView(
+            controller: pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            children: [
+              PomoPage(pageChanged: pageChanged),
+              const SettingsPage()
+            ],
+          )
+      ),
     );
   }
 }
