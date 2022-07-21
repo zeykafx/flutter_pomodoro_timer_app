@@ -1,4 +1,4 @@
-package com.example.flutter_pomodoro_timer_app;
+package com.zeykafx.pomo_focus;
 
 import io.flutter.embedding.android.FlutterActivity;
 
