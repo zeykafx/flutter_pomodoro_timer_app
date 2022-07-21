@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/site_blocker.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
 import 'package:get/get.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class StartStopButton extends StatefulWidget {
   const StartStopButton(
@@ -36,6 +39,7 @@ class _StartStopButtonState extends State<StartStopButton> {
   void stopTimer() {
     // setState(() {
     widget.timer.cancel();
+    flutterLocalNotificationsPlugin.cancelAll();
     // });
   }
 

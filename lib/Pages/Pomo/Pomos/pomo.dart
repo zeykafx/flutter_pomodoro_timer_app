@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/reset_button.dart';
@@ -10,6 +11,8 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:styled_widget/styled_widget.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class Pomo extends StatefulWidget {
   const Pomo({Key? key, required this.pageChanged}) : super(key: key);
@@ -44,6 +47,7 @@ class _PomoState extends State<Pomo> {
     updateFormattedTimeLeftString();
     if (widget.pageChanged == false) {
       timer.cancel();
+      flutterLocalNotificationsPlugin.cancelAll();
     }
   }
 
@@ -69,6 +73,7 @@ class _PomoState extends State<Pomo> {
   }
 
   void startTimer() {
+    flutterLocalNotificationsPlugin.cancelAll();
     setState(() {
       endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
       timerController.changeTimerFinished(false);
@@ -79,6 +84,45 @@ class _PomoState extends State<Pomo> {
         }
       });
     });
+    _showNotificationWithChronometer();
+  }
+
+  Future<void> _showNotificationWithChronometer() async {
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'pomo focus',
+      'main',
+      channelDescription: 'Pomo focus',
+      importance: Importance.min,
+      priority: Priority.min,
+      when: endTimestamp,
+      usesChronometer: true,
+    );
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'Pomo Focus',
+        'Timer currently running...',
+        platformChannelSpecifics,
+    );
+  }
+
+  Future<void> showTimerFinishedNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'pomo focus',
+      'main',
+      channelDescription: 'Pomo focus',
+      importance: Importance.min,
+      priority: Priority.min,
+      usesChronometer: false,
+    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Pomo Focus',
+      'Timer Ended',
+      platformChannelSpecifics,
+    );
   }
 
   void resetTimer(int minutes) {
@@ -88,6 +132,8 @@ class _PomoState extends State<Pomo> {
       box.write("pomoLengthSeconds", pomoLengthSeconds);
       isTimerFinished = false;
       timerController.changeTimerFinished(false);
+      flutterLocalNotificationsPlugin.cancelAll();
+      _showNotificationWithChronometer();
     });
   }
 
@@ -98,6 +144,8 @@ class _PomoState extends State<Pomo> {
       endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     });
     updateFormattedTimeLeftString();
+    flutterLocalNotificationsPlugin.cancelAll();
+    _showNotificationWithChronometer();
   }
 
   void decrementTimeStamp(int minutes) {
@@ -115,6 +163,8 @@ class _PomoState extends State<Pomo> {
     if (DateTime.now().compareTo(timestampDate) >= 0) {
       player.play(AssetSource("audio/notification_sound.mp3"));
       timer.cancel();
+      flutterLocalNotificationsPlugin.cancelAll();
+      showTimerFinishedNotification();
       pomoLengthSeconds = 0;
       box.write("pomoLengthSeconds", 0);
       timerController.changeTimerFinished(true);

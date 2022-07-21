@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,6 +34,9 @@ const List<String> colorText = <String>[
   "Red",
 ];
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -51,8 +55,31 @@ class _MyAppState extends State<MyApp> {
       Get.changeThemeMode(ThemeMode.dark);
     }
     colorSelected = box.read("colorSelected") ?? 0;
+
+    initNotifs();
+
     super.initState();
   }
+
+  Future<void> initNotifs() async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
+    const InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid,
+    );
+    await flutterLocalNotificationsPlugin.initialize(
+        initializationSettings,
+        onSelectNotification: selectNotification
+    );
+
+  }
+
+  void selectNotification(String? payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: $payload');
+    }
+  }
+
 
   void changeDarModeEnabled(bool newVal) {
     setState(() {
