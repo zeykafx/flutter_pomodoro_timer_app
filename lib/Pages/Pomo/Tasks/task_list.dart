@@ -256,7 +256,7 @@ class _TaskListState extends State<TaskList> {
                       onSecondaryTap: () => deleteTask(task),
                       child: ListTile(
                         tileColor: task.taskType == TaskType.inProgress ? Theme.of(context).colorScheme.onSecondary : null,
-                        dense: false,
+                        dense: true,
                         onLongPress: () => deleteTask(task),
                         onTap: () => editTask(task),
                         title: Text(

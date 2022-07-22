@@ -101,8 +101,8 @@ class _PomoState extends State<Pomo> {
       'pomo focus',
       'main',
       channelDescription: 'Pomo focus',
-      importance: Importance.min,
-      priority: Priority.min,
+      importance: Importance.max,
+      priority: Priority.max,
       when: endTimestamp,
       usesChronometer: true,
     );
@@ -120,8 +120,8 @@ class _PomoState extends State<Pomo> {
       'pomo focus',
       'main',
       channelDescription: 'Pomo focus',
-      importance: Importance.min,
-      priority: Priority.min,
+      importance: Importance.max,
+      priority: Priority.max,
       usesChronometer: false,
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -241,7 +241,7 @@ class _PomoState extends State<Pomo> {
           ),
         ].toRow(
             mainAxisAlignment: MainAxisAlignment.center
-        ).padding(all: 10),
+        ).padding(all: 10, left: 25),
         [
           StartStopButton(
               timer: timer,
