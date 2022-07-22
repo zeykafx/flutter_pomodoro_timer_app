@@ -101,8 +101,8 @@ class _PomoState extends State<Pomo> {
       'pomo focus',
       'main',
       channelDescription: 'Pomo focus',
-      importance: Importance.max,
-      priority: Priority.max,
+      importance: Importance.min,
+      priority: Priority.min,
       when: endTimestamp,
       usesChronometer: true,
     );

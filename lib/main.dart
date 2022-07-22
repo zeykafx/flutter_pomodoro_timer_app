@@ -9,6 +9,8 @@ import 'Pages/Settings/settings_page.dart';
 
 main() async {
   await GetStorage.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Future.delayed(const Duration(milliseconds: 300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
   runApp(const MyApp());
 }
 
@@ -154,11 +156,10 @@ class _MainState extends State<Main> {
   int _selectedIndex = 0;
   bool pageChanged = false;
 
-  late PageController pageController;
+  late PageController pageController = PageController();
 
   @override
   void initState() {
-    pageController = PageController();
     super.initState();
   }
 
@@ -182,16 +183,16 @@ class _MainState extends State<Main> {
     });
   }
 
-  Widget createScreen(int index) {
-    switch (index) {
-      case 0:
-        return PomoPage(pageChanged: pageChanged);
-      case 1:
-        return const SettingsPage();
-      default:
-        return PomoPage(pageChanged: pageChanged);
-    }
-  }
+  // Widget createScreen(int index) {
+  //   switch (index) {
+  //     case 0:
+  //       return PomoPage(pageChanged: pageChanged);
+  //     case 1:
+  //       return const SettingsPage();
+  //     default:
+  //       return PomoPage(pageChanged: pageChanged);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
