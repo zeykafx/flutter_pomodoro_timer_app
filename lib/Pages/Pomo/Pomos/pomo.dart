@@ -101,8 +101,8 @@ class _PomoState extends State<Pomo> {
       'pomo focus',
       'main',
       channelDescription: 'Pomo focus',
-      importance: Importance.min,
-      priority: Priority.min,
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
       when: endTimestamp,
       usesChronometer: true,
     );
@@ -140,7 +140,7 @@ class _PomoState extends State<Pomo> {
       box.write("pomoLengthSeconds", pomoLengthSeconds);
       isTimerFinished = false;
       timerController.changeTimerFinished(false);
-      if (!kIsWeb && !Platform.isWindows) {
+      if (!kIsWeb && !Platform.isWindows && timer.isActive) {
         flutterLocalNotificationsPlugin.cancelAll();
         _showNotificationWithChronometer();
       }
