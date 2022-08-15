@@ -7,10 +7,10 @@ class SettingsController extends GetxController {
   RxBool blockSite = false.obs;
   RxList sitesToBlock = [].obs;
 
-  RxInt defaultMinutes = 45.obs;
+  RxInt defaultMinutes = 25.obs;
 
   SettingsController() {
-    defaultMinutes.value = box.read("defaultMinutes") ?? 45;
+    defaultMinutes.value = box.read("defaultMinutes") ?? 25;
     defaultMinutes.listen((int val) {
       box.write("defaultMinutes", val);
     });

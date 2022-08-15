@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/pomo.dart';
+import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/pomo_widget.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Tasks/task_list.dart';
 
 class PomoPage extends StatelessWidget {
