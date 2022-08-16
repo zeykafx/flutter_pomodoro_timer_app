@@ -136,32 +136,37 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.macOS
           ].contains(defaultTargetPlatform))
             WindowTitleBarBox(
-              child: Container(
-                color: darkModeEnabled ? Colors.white : Colors.black,
-                child: Row(children: [
-                  Expanded(
-                      child: MoveWindow(
-                          child: Center(
-                              child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: DefaultTextStyle(
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: darkModeEnabled ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.normal,
+              // the builder is needed for the context to find to the correct theme data
+              child: Builder(
+                builder: (context) {
+                  return Container(
+                    color: Theme.of(context).canvasColor,
+                    child: Row(children: [
+                      Expanded(
+                          child: MoveWindow(
+                              child: Center(
+                                  child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: DefaultTextStyle(
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: darkModeEnabled ? Colors.black : Colors.white,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            child: const Text(
+                              'Pomo Focus',
+                            ),
+                          ),
                         ),
-                        child: const Text(
-                          'Pomo Focus',
-                        ),
+                      )))),
+                      WindowButtons(
+                        isDarkMode: darkModeEnabled,
                       ),
-                    ),
-                  )))),
-                  WindowButtons(
-                    isDarkMode: darkModeEnabled,
-                  ),
-                ]),
+                    ]),
+                  );
+                }
               ),
             ),
           Expanded(
