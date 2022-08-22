@@ -16,7 +16,7 @@ class PomoPage extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
           child: Pomo(pageChanged: pageChanged),
         ),
-        const Divider(),
+        // const Divider(),
         Expanded(child: Padding(
           padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
           child: Container(

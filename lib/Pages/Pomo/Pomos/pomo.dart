@@ -73,6 +73,10 @@ class PomoSession {
   }
 
   void endTimer() {
+    // if (remainingSessions == 0) {
+    //   remainingSessions = 3; // for now just reset it to 3 TODO: add setting for this
+    // }
+
     // prepping for the next session
     switch (currentPhase) {
       case PomoSessionPhase.stopped:

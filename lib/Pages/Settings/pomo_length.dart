@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -14,91 +12,122 @@ class PomoLengthSettings extends StatefulWidget {
 
 class _PomoLengthSettingsState extends State<PomoLengthSettings> {
   SettingsController settingsController = Get.put(SettingsController());
-  TextEditingController textEditingController = TextEditingController();
-
-  @override
-  void initState() {
-    textEditingController.text = settingsController.defaultMinutes.value.toString();
-    settingsController.defaultMinutes.listen((int newData) {
-      textEditingController.text = settingsController.defaultMinutes.value.toString();
-    });
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      key: const ValueKey("LengthCard"),
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(2.0),
-            child: Text(
-              "Default Pomodoro session length",
-              style: TextStyle(fontSize: 15),
-            ),
-          ),
-          const Divider(),
-          [
-            InkWell(
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
-              child: const Icon(Icons.arrow_drop_down, size: 45),
-              onTap: () => settingsController.defaultMinutes--,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 50,
-                child: TextField(
-                  controller: textEditingController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'\d')),
-                  ],
-                  onSubmitted: (String value) {
-                    if (value.isNotEmpty) {
-                      settingsController.defaultMinutes.value = int.parse(value);
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
-                  onEditingComplete: () {
-                    if (textEditingController.text.isNotEmpty) {
-                      settingsController.defaultMinutes.value = int.parse(textEditingController.text);
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Default minutes",
-                    // labelText: "Default minutes",
-                  ),
+    return Column(
+      children: [
+        // work time length
+        Card(
+          key: const ValueKey("WorkLengthCard"),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Text(
+                  "Work time length",
+                  style: TextStyle(fontSize: 15),
                 ),
               ),
-            ),
-            InkWell(
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
-              child: const Icon(Icons.arrow_drop_up, size: 45),
-              onTap: () => settingsController.defaultMinutes++,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton.icon(
-              onPressed: () {
-                settingsController.defaultMinutes.value = int.parse(textEditingController.text);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Saved default pomodoro length to ${settingsController.defaultMinutes} minutes")));
-                // Get.snackbar(
-                //     "Saved!",
-                //     "Saved default pomodoro length to ${settingsController.defaultMinutes} minutes",
-                //     padding: const EdgeInsets.all(8.0));
-              },
-              label: const Text("Save"),
-              icon: const Icon(FontAwesome5.save, size: 15),
-            ),)
+              const Divider(),
+              [
+                Slider(
+                  value: settingsController.defaultMinutes.value.toDouble(),
+                  min: 5,
+                  max: 60,
+                  divisions: 11,
+                  label: settingsController.defaultMinutes.value.round().toString(),
+                  onChanged: (double nValue) {
+                    setState(() {
+                      settingsController.defaultMinutes.value = nValue.toInt();
+                    });
+                  },
+                ).expanded()
+              ].toRow(mainAxisAlignment: MainAxisAlignment.center),
+              Text(
+                "Work time lasts ${settingsController.defaultMinutes.value} minutes.",
+                style: const TextStyle(
+                  fontSize: 15,
+                ),
+              ).paddingAll(10),
+            ],
+          ),
+        ),
 
-          ].toRow(mainAxisAlignment: MainAxisAlignment.center),
-        ],
-      ),
+        // short break
+        Card(
+          key: const ValueKey("ShortBreakLengthCard"),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Text(
+                  "Short break length",
+                  style: TextStyle(fontSize: 15),
+                ),
+              ),
+              const Divider(),
+              [
+                Slider(
+                  value: settingsController.shortBreakLength.value.toDouble(),
+                  min: 1,
+                  max: 20,
+                  // divisions: 5,
+                  label: settingsController.shortBreakLength.value.round().toString(),
+                  onChanged: (double nValue) {
+                    setState(() {
+                      settingsController.shortBreakLength.value = nValue.toInt();
+                    });
+                  },
+                ).expanded()
+              ].toRow(mainAxisAlignment: MainAxisAlignment.center),
+              Text(
+                "Short break lasts ${settingsController.shortBreakLength.value} minutes.",
+                style: const TextStyle(
+                  fontSize: 15,
+                ),
+              ).paddingAll(10),
+            ],
+          ),
+        ),
+
+        // long break
+        Card(
+          key: const ValueKey("LongBreakLengthCard"),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Text(
+                  "Long break length",
+                  style: TextStyle(fontSize: 15),
+                ),
+              ),
+              const Divider(),
+              [
+                Slider(
+                  value: settingsController.longBreakLength.value.toDouble(),
+                  min: 1,
+                  max: 20,
+                  // divisions: 5,
+                  label: settingsController.longBreakLength.value.round().toString(),
+                  onChanged: (double nValue) {
+                    setState(() {
+                      settingsController.longBreakLength.value = nValue.toInt();
+                    });
+                  },
+                ).expanded()
+              ].toRow(mainAxisAlignment: MainAxisAlignment.center),
+              Text(
+                "Long break lasts ${settingsController.longBreakLength.value} minutes.",
+                style: const TextStyle(
+                  fontSize: 15,
+                ),
+              ).paddingAll(10),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

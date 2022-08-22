@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/pomo.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/reset_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/start_stop_button.dart';
@@ -28,10 +29,6 @@ class Pomo extends StatefulWidget {
 class _PomoState extends State<Pomo> {
   SettingsController settingsController = Get.put(SettingsController());
 
-  // int pomoLengthSeconds = 0;
-
-  // int endTimestamp = 0;
-  // String timeLeftString = "";
   late Timer timer;
   bool isTimerFinished = false;
 
@@ -48,18 +45,17 @@ class _PomoState extends State<Pomo> {
 
     pomoSession = PomoSession(
         remainingSessions: 0,
-        workLengthSeconds: 25 * 60,
+        workLengthSeconds: settingsController.defaultMinutes.value * 60,
         shortBreaksLeftBeforeLong: 3,
         endTimestamp: 0,
         timeLeftString: "",
         currentPhase: PomoSessionPhase.stopped,
-        shortBreakLengthSeconds: 5 * 60,
-        longBreakLengthSeconds: 10 * 60,
+        shortBreakLengthSeconds: settingsController.shortBreakLength.value * 60,
+        longBreakLengthSeconds: settingsController.longBreakLength.value * 60,
         shortBreaksDone: 0,
         pomoLengthSeconds: 0);
 
     getPreviousPomoLength();
-
 
     startTimer();
     updateFormattedTimeLeftString();
@@ -98,8 +94,6 @@ class _PomoState extends State<Pomo> {
     }
     pomoSession.start();
     setState(() {
-      // endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
-      // timerController.changeTimerFinished(false);
       timer = Timer.periodic(const Duration(milliseconds: 1000), (Timer t) {
         updateFormattedTimeLeftString();
         if (!isTimerFinished) {
@@ -152,9 +146,6 @@ class _PomoState extends State<Pomo> {
   void resetTimer(int minutes) {
     setState(() {
       pomoSession.resetTimer(minutes);
-      // endTimestamp = DateTime.now().add(Duration(minutes: minutes)).millisecondsSinceEpoch;
-      // pomoLengthSeconds = Duration(minutes: minutes).inSeconds;
-      // timerController.changeTimerFinished(false);
       box.write("pomoLengthSeconds", pomoSession.pomoLengthSeconds);
       isTimerFinished = false;
       if (!kIsWeb && !Platform.isWindows && timer.isActive) {
@@ -167,11 +158,8 @@ class _PomoState extends State<Pomo> {
   void incrementTimeStamp(int minutes) {
     setState(() {
       pomoSession.incrementTimeStamp(minutes, timer);
-      // pomoLengthSeconds += Duration(minutes: minutes).inSeconds;
       box.write("pomoLengthSeconds", pomoSession.pomoLengthSeconds);
-      // endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     });
-    // updateFormattedTimeLeftString();
     if (!kIsWeb && !Platform.isWindows) {
       flutterLocalNotificationsPlugin.cancelAll();
       _showNotificationWithChronometer();
@@ -183,10 +171,6 @@ class _PomoState extends State<Pomo> {
       incrementTimeStamp(-minutes);
     }
   }
-
-  // DateTime getDateTime() {
-  //   return DateTime.fromMillisecondsSinceEpoch(endTimestamp);
-  // }
 
   bool isTimerDone() {
     DateTime timestampDate = pomoSession.getDateTime();
@@ -210,16 +194,11 @@ class _PomoState extends State<Pomo> {
     }
   }
 
-  // Duration getTimeLeft() {
-  //   return getDateTime().difference(DateTime.now());
-  // }
-
   String updateFormattedTimeLeftString() {
     String timeLeftString = pomoSession.updateFormattedTimeLeftString(timer);
     setState(() {});
     return timeLeftString;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -239,18 +218,19 @@ class _PomoState extends State<Pomo> {
                   size: 10,
                 )),
           ].toColumn(mainAxisAlignment: MainAxisAlignment.center, separator: const Padding(padding: EdgeInsets.all(0))),
-        ].toRow(mainAxisAlignment: MainAxisAlignment.center).padding(all: 10, left: 25),
+        ].toRow(mainAxisAlignment: MainAxisAlignment.center).padding(left: 35),
         Text(
-            phaseToString(pomoSession.currentPhase)
-        ),
+          phaseToString(pomoSession.currentPhase),
+          style: const TextStyle(fontSize: 15),
+        ).paddingDirectional(bottom: 10),
         [
           StartStopButton(
-                  timer: timer,
-                  startTimer: startTimer,
-                  updateFormattedTimeLeftString: updateFormattedTimeLeftString,
-                  resetTimer: resetTimer,
-                  getTimeLeft: pomoSession.getTimeLeft)
-              .paddingAll(5),
+              timer: timer,
+              startTimer: startTimer,
+              updateFormattedTimeLeftString: updateFormattedTimeLeftString,
+              resetTimer: resetTimer,
+              getTimeLeft: pomoSession.getTimeLeft),
+          // .paddingAll(5),
           ResetButton(
             defaultMinutes: settingsController.defaultMinutes.value,
             updateFormattedTimeLeftString: updateFormattedTimeLeftString,

@@ -12,15 +12,12 @@ import 'Pages/Settings/settings_page.dart';
 main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(const Duration(
-      milliseconds:
-          300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
+  await Future.delayed(const Duration(milliseconds: 300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
   runApp(const MyApp());
 
-  if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]
-      .contains(defaultTargetPlatform)) {
+  if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS].contains(defaultTargetPlatform)) {
     doWhenWindowReady(() {
-      appWindow.alignment = Alignment.center;
+      // appWindow.alignment = Alignment.center;
       appWindow.show();
     });
   }
@@ -48,8 +45,7 @@ const List<String> colorText = <String>[
   "Red",
 ];
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -76,16 +72,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initNotifs() async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('launcher_icon');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
+    const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: selectNotification);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: selectNotification);
   }
 
   void selectNotification(String? payload) async {
@@ -113,74 +105,69 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Pomo Focus',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: colorOptions[colorSelected],
-        brightness: Brightness.light,
-        textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme),
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: colorOptions[colorSelected],
-        brightness: Brightness.dark,
-        textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
-      ),
-      themeMode: ThemeMode.light,
-      home: Column(
-        children: [
-          if ([
-            TargetPlatform.windows,
-            TargetPlatform.linux,
-            TargetPlatform.macOS
-          ].contains(defaultTargetPlatform))
-            WindowTitleBarBox(
-              // the builder is needed for the context to find to the correct theme data
-              child: Builder(
-                builder: (context) {
-                  return Container(
-                    color: Theme.of(context).canvasColor,
-                    child: Row(children: [
-                      Expanded(
-                          child: MoveWindow(
-                              child: Center(
-                                  child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: DefaultTextStyle(
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: darkModeEnabled ? Colors.black : Colors.white,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            child: const Text(
-                              'Pomo Focus',
+        debugShowCheckedModeBanner: false,
+        title: 'Pomo Focus',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: colorOptions[colorSelected],
+          brightness: Brightness.light,
+          textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme),
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: colorOptions[colorSelected],
+          brightness: Brightness.dark,
+          textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+        ),
+        themeMode: ThemeMode.light,
+        home: SafeArea(
+          child: Column(
+            children: [
+              if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS].contains(defaultTargetPlatform))
+                WindowTitleBarBox(
+                  // the builder is needed for the context to find to the correct theme data
+                  child: Builder(builder: (context) {
+                    return Container(
+                      color: Theme.of(context).canvasColor,
+                      child: Row(children: [
+                        Expanded(
+                            child: MoveWindow(
+                                child: Center(
+                                    child: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: DefaultTextStyle(
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: darkModeEnabled ? Colors.black : Colors.white,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              child: const Text(
+                                'Pomo Focus',
+                              ),
                             ),
                           ),
+                        )))),
+                        WindowButtons(
+                          isDarkMode: darkModeEnabled,
                         ),
-                      )))),
-                      WindowButtons(
-                        isDarkMode: darkModeEnabled,
-                      ),
-                    ]),
-                  );
-                }
-              ),
-            ),
-          Expanded(
-            child: Main(
-              title: 'Pomo Focus',
-              darkModeEnabled: darkModeEnabled,
-              changeDarModeEnabled: changeDarModeEnabled,
-              changeColorSelected: changeColorSelected,
-              colorSelected: colorSelected,
-            ),
-          )
-        ],
-      ),
-    );
+                      ]),
+                    );
+                  }),
+                ),
+              Expanded(
+                child: Main(
+                  title: 'Pomo Focus',
+                  darkModeEnabled: darkModeEnabled,
+                  changeDarModeEnabled: changeDarModeEnabled,
+                  changeColorSelected: changeColorSelected,
+                  colorSelected: colorSelected,
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }
 
@@ -188,6 +175,7 @@ class WindowButtons extends StatelessWidget {
   final bool isDarkMode;
 
   const WindowButtons({Key? key, required this.isDarkMode}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -197,12 +185,8 @@ class WindowButtons extends StatelessWidget {
             iconNormal: isDarkMode ? Colors.black : Colors.white,
             iconMouseDown: isDarkMode ? Colors.black : Colors.white,
             iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode
-                ? Colors.black.withOpacity(0.1)
-                : Colors.white.withOpacity(0.1),
-            mouseDown: isDarkMode
-                ? Colors.black.withOpacity(0.2)
-                : Colors.white.withOpacity(0.2),
+            mouseOver: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.white.withOpacity(0.1),
+            mouseDown: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
           ),
         ),
         MaximizeWindowButton(
@@ -210,12 +194,8 @@ class WindowButtons extends StatelessWidget {
             iconNormal: isDarkMode ? Colors.black : Colors.white,
             iconMouseDown: isDarkMode ? Colors.black : Colors.white,
             iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode
-                ? Colors.black.withOpacity(0.1)
-                : Colors.white.withOpacity(0.1),
-            mouseDown: isDarkMode
-                ? Colors.black.withOpacity(0.2)
-                : Colors.white.withOpacity(0.2),
+            mouseOver: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.white.withOpacity(0.1),
+            mouseDown: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
           ),
         ),
         CloseWindowButton(
@@ -274,8 +254,7 @@ class _MainState extends State<Main> {
     setState(() {
       _selectedIndex = index;
       pageChanged = true;
-      pageController.animateToPage(index,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+      pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     });
   }
 
@@ -323,8 +302,7 @@ class _MainState extends State<Main> {
             child: IconButton(
                 onPressed: () {
                   setState(() {
-                    Get.changeThemeMode(
-                        Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+                    Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
                     widget.changeDarModeEnabled(Get.isDarkMode);
                   });
                 },
@@ -336,10 +314,7 @@ class _MainState extends State<Main> {
             tooltip: "Show color menu",
             icon: const Icon(Icons.color_lens),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    width: 0.3)),
+                borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
             itemBuilder: (context) {
               return List.generate(colorOptions.length, (index) {
                 return PopupMenuItem(
@@ -349,15 +324,11 @@ class _MainState extends State<Main> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Icon(
-                            index == widget.colorSelected
-                                ? Icons.color_lens
-                                : Icons.color_lens_outlined,
+                            index == widget.colorSelected ? Icons.color_lens : Icons.color_lens_outlined,
                             color: colorOptions[index],
                           ),
                         ),
-                        Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(colorText[index]))
+                        Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index]))
                       ],
                     ));
               });
