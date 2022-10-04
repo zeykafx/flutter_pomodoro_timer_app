@@ -21,7 +21,7 @@ class PomoPage extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
           child: Container(
               constraints: const BoxConstraints(maxWidth: 700),
-              child: const TaskList()
+              child: TaskList()
           ),
         )),
       ],

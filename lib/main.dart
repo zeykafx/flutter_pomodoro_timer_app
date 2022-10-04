@@ -307,8 +307,8 @@ class _MainState extends State<Main> {
                   });
                 },
                 icon: widget.darkModeEnabled
-                    ? const Icon(Icons.dark_mode, color: Colors.black, size: 18)
-                    : const Icon(Icons.sunny, color: Colors.white, size: 18)),
+                    ? const Icon(Icons.dark_mode, size: 18)
+                    : const Icon(Icons.sunny, size: 18)),
           ),
           PopupMenuButton(
             tooltip: "Show color menu",

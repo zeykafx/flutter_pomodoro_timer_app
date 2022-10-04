@@ -177,6 +177,10 @@ class _PomoState extends State<Pomo> {
     if (DateTime.now().compareTo(timestampDate) >= 0) {
       player.play(AssetSource("audio/notification_sound.mp3"));
       timer.cancel();
+      if (pomoSession.currentPhase == PomoSessionPhase.working) {
+        timerController.changeTimerFinished(true);
+      }
+      
       pomoSession.endTimer();
       if (!kIsWeb && !Platform.isWindows) {
         flutterLocalNotificationsPlugin.cancelAll();
@@ -184,7 +188,7 @@ class _PomoState extends State<Pomo> {
       }
       pomoSession.pomoLengthSeconds = 0;
       box.write("pomoLengthSeconds", 0);
-      timerController.changeTimerFinished(true);
+
 
       return true;
     } else {
