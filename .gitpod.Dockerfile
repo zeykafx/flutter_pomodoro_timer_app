@@ -31,5 +31,5 @@ RUN cd /home/gitpod && \
 RUN mkdir -p /home/gitpod/android-sdk && \
     cd /home/gitpod/android-sdk && \
     wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip && \
-    unzip comandlinetools-linux-8512546_latest.zip && \
-    rm -f comandlinetools-linux-8512546_latest.zip
+    unzip commandlinetools-linux-8512546_latest.zip && \
+    rm -f commandlinetools-linux-8512546_latest.zip
