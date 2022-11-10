@@ -23,10 +23,10 @@ RUN cd /home/gitpod && \
     rm -f flutter_sdk.tar.xz
 
 RUN cd /home/gitpod && \
-    wget -qO android_studio.zip \
+    wget -qO android_studio.tar.gz \
     https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2021.3.1.17/android-studio-2021.3.1.17-linux.tar.gz && \
-    unzip android_studio.zip && \
-    rm -f android_studio.zip
+    tar -xvf android_studio.tar.gz && \
+    rm -f android_studio.tar.gz
 
 RUN mkdir -p /home/gitpod/android-sdk && \
     cd /home/gitpod/android-sdk && \
