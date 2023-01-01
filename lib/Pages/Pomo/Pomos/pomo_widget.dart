@@ -10,12 +10,12 @@ import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/reset_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/start_stop_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class Pomo extends StatefulWidget {
   const Pomo({Key? key, required this.pageChanged}) : super(key: key);
@@ -74,13 +74,10 @@ class _PomoState extends State<Pomo> {
   }
 
   void getPreviousPomoLength() {
-    int boxLength = box.read("pomoLengthSeconds") ??
-        Duration(minutes: settingsController.defaultMinutes.value).inSeconds;
+    int boxLength = box.read("pomoLengthSeconds") ?? Duration(minutes: settingsController.defaultMinutes.value).inSeconds;
 
     if (boxLength > 0) {
-      pomoSession.endTimestamp = DateTime.now()
-          .add(Duration(seconds: boxLength))
-          .millisecondsSinceEpoch;
+      pomoSession.endTimestamp = DateTime.now().add(Duration(seconds: boxLength)).millisecondsSinceEpoch;
       pomoSession.pomoLengthSeconds = boxLength;
       box.write("pomoLengthSeconds", boxLength);
     } else {
@@ -98,6 +95,7 @@ class _PomoState extends State<Pomo> {
     pomoSession.start();
     setState(() {
       timer = Timer.periodic(const Duration(milliseconds: 1000), (Timer t) {
+        print("tick");
         updateFormattedTimeLeftString();
         if (!isTimerFinished) {
           isTimerFinished = isTimerDone();
@@ -110,8 +108,7 @@ class _PomoState extends State<Pomo> {
   }
 
   Future<void> _showNotificationWithChronometer() async {
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+    final AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'pomo focus',
       'main',
       channelDescription: 'Pomo focus',
@@ -120,8 +117,7 @@ class _PomoState extends State<Pomo> {
       when: pomoSession.endTimestamp,
       usesChronometer: true,
     );
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0,
       'Pomo Focus',
@@ -131,8 +127,7 @@ class _PomoState extends State<Pomo> {
   }
 
   Future<void> showTimerFinishedNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'pomo focus',
       'main',
       channelDescription: 'Pomo focus',
@@ -140,8 +135,7 @@ class _PomoState extends State<Pomo> {
       priority: Priority.max,
       usesChronometer: false,
     );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0,
       'Pomo Focus',
@@ -181,14 +175,17 @@ class _PomoState extends State<Pomo> {
 
   bool isTimerDone() {
     DateTime timestampDate = pomoSession.getDateTime();
+
     if (DateTime.now().compareTo(timestampDate) >= 0) {
       player.play(AssetSource("audio/notification_sound.mp3"));
       timer.cancel();
+
       if (pomoSession.currentPhase == PomoSessionPhase.working) {
         timerController.changeTimerFinished(true);
       }
 
       pomoSession.endTimer();
+      updateFormattedTimeLeftString();
       if (!kIsWeb && !Platform.isWindows) {
         flutterLocalNotificationsPlugin.cancelAll();
         showTimerFinishedNotification();
@@ -198,8 +195,7 @@ class _PomoState extends State<Pomo> {
 
       return true;
     } else {
-      pomoSession.pomoLengthSeconds =
-          pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
+      pomoSession.pomoLengthSeconds = pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
       box.write("pomoLengthSeconds", pomoSession.pomoLengthSeconds);
       return false;
     }
@@ -221,39 +217,39 @@ class _PomoState extends State<Pomo> {
             style: const TextStyle(fontSize: 45),
           ),
           [
-            // IconButton(
-            //     onPressed: () => incrementTimeStamp(1),
-            //     icon: const Icon(FontAwesome5.plus, size: 10)),
-            // IconButton(
-            //     onPressed: () => decrementTimeStamp(1),
-            //     icon: const Icon(
-            //       FontAwesome5.minus,
-            //       size: 10,
-            //     )),
-            ResetButton(
-              defaultMinutes: settingsController.defaultMinutes.value,
-              updateFormattedTimeLeftString: updateFormattedTimeLeftString,
-              resetTimer: resetTimer,
-            ).paddingAll(5),
-
-            StartStopButton(
-                timer: timer,
-                startTimer: startTimer,
+            // reset and start/stop button
+            [
+              ResetButton(
+                defaultMinutes: settingsController.defaultMinutes.value,
                 updateFormattedTimeLeftString: updateFormattedTimeLeftString,
                 resetTimer: resetTimer,
-                getTimeLeft: pomoSession.getTimeLeft),
-            // .paddingAll(5),
-          ].toColumn(
-              mainAxisAlignment: MainAxisAlignment.center,
-              separator: const Padding(padding: EdgeInsets.all(0))),
+              ).paddingAll(5),
+
+              StartStopButton(
+                  timer: timer,
+                  startTimer: startTimer,
+                  updateFormattedTimeLeftString: updateFormattedTimeLeftString,
+                  resetTimer: resetTimer,
+                  getTimeLeft: pomoSession.getTimeLeft),
+              // .paddingAll(5),
+            ].toColumn(),
+
+            // up and down buttons
+            [
+              IconButton(onPressed: () => incrementTimeStamp(1), icon: const Icon(FontAwesome5.plus, size: 18)).paddingAll(5),
+              IconButton(
+                  onPressed: () => decrementTimeStamp(1),
+                  icon: const Icon(
+                    FontAwesome5.minus,
+                    size: 18,
+                  )),
+            ].toColumn(),
+          ].toRow(mainAxisAlignment: MainAxisAlignment.center, separator: const Padding(padding: EdgeInsets.all(0))),
         ].toRow(mainAxisAlignment: MainAxisAlignment.center).padding(left: 35),
         Text(
           phaseToString(pomoSession.currentPhase),
           style: const TextStyle(fontSize: 15),
         ).paddingDirectional(bottom: 10),
-        // [
-        //
-        // ].toRow(mainAxisAlignment: MainAxisAlignment.center),
       ].toColumn(),
     );
   }

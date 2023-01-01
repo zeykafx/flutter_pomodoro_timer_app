@@ -86,96 +86,86 @@ class _TaskInputState extends State<TaskInput> {
     Size mediaQuerySize = MediaQuery.of(context).size;
     ColorScheme colors = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Flex(
-        direction: mediaQuerySize.width < columnWidth
-            ? Axis.vertical
-            : Axis.horizontal,
-        children: [
-          wrapInExpanded(
-              TextField(
-                controller: textEditingController,
-                onTap: () {
-                  setState(() {
-                    hintIdx = random.nextInt(hintTexts.length);
-                  });
-                },
-                onSubmitted: (String value) {
-                  if (value.isNotEmpty) {
-                    Task task = createTask(value);
+    return Flex(
+      direction: mediaQuerySize.width < columnWidth ? Axis.vertical : Axis.horizontal,
+      children: [
+        wrapInExpanded(
+            TextField(
+              controller: textEditingController,
+              onTap: () {
+                setState(() {
+                  hintIdx = random.nextInt(hintTexts.length);
+                });
+              },
+              onSubmitted: (String value) {
+                if (value.isNotEmpty) {
+                  Task task = createTask(value);
+                  widget.taskListFunction(task);
+                  textEditingController.clear();
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              decoration: InputDecoration(
+                // prefixIcon: const Icon(Icons.add),
+                border: const OutlineInputBorder(),
+                hintText: hintTexts[hintIdx],
+                labelText: "Enter a task",
+              ),
+            ),
+            mediaQuerySize.width),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                child: Column(
+                  children: [
+                    const Text("N° of pomos"),
+                    [
+                      InkWell(
+                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        child: const Icon(Icons.arrow_drop_down, size: 45),
+                        onTap: () => decrementNumberOfPomos(1),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text("$numberOfPomos"),
+                      ),
+                      InkWell(
+                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        child: const Icon(Icons.arrow_drop_up, size: 45),
+                        onTap: () => incrementNumberOfPomos(1),
+                      ),
+                    ].toRow(mainAxisAlignment: MainAxisAlignment.center, separator: const Padding(padding: EdgeInsets.all(0))),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                tooltip: "Add task",
+                style: IconButton.styleFrom(
+                  foregroundColor: colors.onSecondaryContainer,
+                  backgroundColor: colors.secondaryContainer,
+                  disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
+                  hoverColor: colors.onSecondaryContainer.withOpacity(0.08),
+                  focusColor: colors.onSecondaryContainer.withOpacity(0.12),
+                  highlightColor: colors.onSecondaryContainer.withOpacity(0.12),
+                ),
+                onPressed: () {
+                  if (textEditingController.text.isNotEmpty) {
+                    Task task = createTask(textEditingController.text);
                     widget.taskListFunction(task);
                     textEditingController.clear();
                     FocusScope.of(context).unfocus();
                   }
                 },
-                decoration: InputDecoration(
-                  // prefixIcon: const Icon(Icons.add),
-                  border: const OutlineInputBorder(),
-                  hintText: hintTexts[hintIdx],
-                  labelText: "Enter a task",
-                ),
               ),
-              mediaQuerySize.width),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  child: Column(
-                    children: [
-                      const Text("N° of pomos"),
-                      [
-                        InkWell(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(30)),
-                          child: const Icon(Icons.arrow_drop_down, size: 45),
-                          onTap: () => decrementNumberOfPomos(1),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text("$numberOfPomos"),
-                        ),
-                        InkWell(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(30)),
-                          child: const Icon(Icons.arrow_drop_up, size: 45),
-                          onTap: () => incrementNumberOfPomos(1),
-                        ),
-                      ].toRow(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          separator: const Padding(padding: EdgeInsets.all(0))),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: "Add task",
-                  style: IconButton.styleFrom(
-                    foregroundColor: colors.onSecondaryContainer,
-                    backgroundColor: colors.secondaryContainer,
-                    disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-                    hoverColor: colors.onSecondaryContainer.withOpacity(0.08),
-                    focusColor: colors.onSecondaryContainer.withOpacity(0.12),
-                    highlightColor:
-                        colors.onSecondaryContainer.withOpacity(0.12),
-                  ),
-                  onPressed: () {
-                    if (textEditingController.text.isNotEmpty) {
-                      Task task = createTask(textEditingController.text);
-                      widget.taskListFunction(task);
-                      textEditingController.clear();
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
-                ),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

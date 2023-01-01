@@ -242,9 +242,9 @@ class _TaskListState extends State<TaskList> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TaskInput(taskListFunction: taskListCallback),
-
-        // list view
+        Material(elevation: 10, shadowColor: Colors.transparent, child: TaskInput(taskListFunction: taskListCallback)),
+        
+		// list view
         Expanded(
           child: taskList.isNotEmpty
               ? ListView.builder(
@@ -252,9 +252,11 @@ class _TaskListState extends State<TaskList> {
                   itemCount: taskList.length,
                   itemBuilder: (BuildContext context, int index) {
                     Task task = taskList[index];
+
                     return GestureDetector(
                       onSecondaryTap: () => deleteTask(task),
                       child: ListTile(
+                        key: UniqueKey(),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

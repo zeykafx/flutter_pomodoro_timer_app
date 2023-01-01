@@ -12,14 +12,18 @@ class PomoPage extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-          child: Pomo(pageChanged: pageChanged),
+        Material(
+          elevation: 10,
+          shadowColor: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+            child: Pomo(pageChanged: pageChanged),
+          ),
         ),
         // const Divider(),
         Expanded(
             child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(0),
           child: Container(margin: const EdgeInsets.symmetric(horizontal: 4), constraints: const BoxConstraints(maxWidth: 700), child: TaskList()),
         )),
       ],

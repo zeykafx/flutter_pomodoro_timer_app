@@ -8,8 +8,7 @@ import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/site_blocker.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
 import 'package:get/get.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class StartStopButton extends StatefulWidget {
   const StartStopButton(
@@ -36,32 +35,16 @@ class _StartStopButtonState extends State<StartStopButton> {
   SettingsController settingsController = Get.put(SettingsController());
 
   void stopTimer() {
-    // setState(() {
     widget.timer.cancel();
     if (!kIsWeb && !Platform.isWindows) {
       flutterLocalNotificationsPlugin.cancelAll();
     }
-    // });
   }
 
   @override
   Widget build(BuildContext context) {
     ColorScheme colors = Theme.of(context).colorScheme;
     return IconButton(
-      // style: ElevatedButton.styleFrom(
-      //   // Foreground color
-      //   foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      //   // Background color
-      //   backgroundColor: Theme.of(context).colorScheme.primary,
-      // ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
-      // style: IconButton.styleFrom(
-      //   foregroundColor: colors.onPrimary,
-      //   backgroundColor: colors.primary,
-      //   disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-      //   hoverColor: colors.onPrimary.withOpacity(0.08),
-      //   focusColor: colors.onPrimary.withOpacity(0.12),
-      //   highlightColor: colors.onPrimary.withOpacity(0.12),
-      // ),
       tooltip: widget.timer.isActive ? "Stop Timer" : "Start Timer",
       onPressed: () {
         setState(() {
@@ -89,9 +72,7 @@ class _StartStopButtonState extends State<StartStopButton> {
           widget.updateFormattedTimeLeftString();
         });
       },
-      icon: widget.timer.isActive
-          ? const Icon(Icons.pause)
-          : const Icon(Icons.play_arrow),
+      icon: widget.timer.isActive ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
       // label: widget.timer.isActive ? const Text("Stop") : const Text("Start")
     );
   }

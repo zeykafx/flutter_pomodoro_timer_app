@@ -60,27 +60,17 @@ class PomoSession {
   TimerController timerController = Get.put(TimerController());
 
   void start() {
-    if (currentPhase == PomoSessionPhase.stopped ||
-        currentPhase == PomoSessionPhase.working) {
-      endTimestamp = getDateTime()
-          .add(DateTime.now()
-              .add(Duration(seconds: pomoLengthSeconds))
-              .difference(getDateTime()))
-          .millisecondsSinceEpoch;
+    if (currentPhase == PomoSessionPhase.stopped || currentPhase == PomoSessionPhase.working) {
+      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
       currentPhase = PomoSessionPhase.working;
     } else if (currentPhase == PomoSessionPhase.shortBreak) {
-      endTimestamp = getDateTime()
-          .add(DateTime.now()
-              .add(Duration(seconds: shortBreakLengthSeconds))
-              .difference(getDateTime()))
-          .millisecondsSinceEpoch;
+      endTimestamp =
+          getDateTime().add(DateTime.now().add(Duration(seconds: shortBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     } else if (currentPhase == PomoSessionPhase.longBreak) {
-      endTimestamp = getDateTime()
-          .add(DateTime.now()
-              .add(Duration(seconds: longBreakLengthSeconds))
-              .difference(getDateTime()))
-          .millisecondsSinceEpoch;
+      endTimestamp =
+          getDateTime().add(DateTime.now().add(Duration(seconds: longBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     }
+
     timerController.changeTimerFinished(false);
   }
 
@@ -93,20 +83,30 @@ class PomoSession {
     switch (currentPhase) {
       case PomoSessionPhase.stopped:
         break;
+
       case PomoSessionPhase.longBreak:
         currentPhase = PomoSessionPhase.working;
+        endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
         break;
+
       case PomoSessionPhase.shortBreak:
         shortBreaksDone++;
         currentPhase = PomoSessionPhase.working;
+        endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+
         break;
+
       case PomoSessionPhase.working:
         remainingSessions--;
         if (shortBreaksDone == shortBreaksLeftBeforeLong) {
           currentPhase = PomoSessionPhase.longBreak;
+          endTimestamp =
+              getDateTime().add(DateTime.now().add(Duration(seconds: longBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+
           shortBreaksDone = 0;
         } else {
           currentPhase = PomoSessionPhase.shortBreak;
+          endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: shortBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
         }
         break;
     }
@@ -114,19 +114,14 @@ class PomoSession {
 
   void resetTimer(int minutes) {
     start();
-    endTimestamp =
-        DateTime.now().add(Duration(minutes: minutes)).millisecondsSinceEpoch;
+    endTimestamp = DateTime.now().add(Duration(minutes: minutes)).millisecondsSinceEpoch;
     pomoLengthSeconds = Duration(minutes: minutes).inSeconds;
     timerController.changeTimerFinished(false);
   }
 
   void incrementTimeStamp(int minutes, Timer timer) {
     pomoLengthSeconds += Duration(minutes: minutes).inSeconds;
-    endTimestamp = getDateTime()
-        .add(DateTime.now()
-            .add(Duration(seconds: pomoLengthSeconds))
-            .difference(getDateTime()))
-        .millisecondsSinceEpoch;
+    endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     updateFormattedTimeLeftString(timer);
   }
 
@@ -140,12 +135,12 @@ class PomoSession {
 
   String updateFormattedTimeLeftString(Timer timer) {
     Duration timeLeft = getTimeLeft();
+
     if (timeLeft.inSeconds >= 0) {
       timeLeftString = timeLeft.toString().substring(0, 7);
     } else {
       // 0:00:00
-      timeLeftString =
-          DateTime.now().difference(DateTime.now()).toString().substring(0, 7);
+      timeLeftString = DateTime.now().difference(DateTime.now()).toString().substring(0, 7);
       // timer.cancel(); // cancel the timer since the pomo is done
     }
     return timeLeftString;
