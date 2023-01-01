@@ -13,14 +13,13 @@ main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   await Future.delayed(const Duration(milliseconds: 300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
-  runApp(const MyApp());
-
   if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS].contains(defaultTargetPlatform)) {
     doWhenWindowReady(() {
       // appWindow.alignment = Alignment.center;
       appWindow.show();
     });
   }
+  runApp(const MyApp());
 }
 
 const List<Color> colorOptions = [
@@ -111,13 +110,13 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
           colorSchemeSeed: colorOptions[colorSelected],
           brightness: Brightness.light,
-          textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme),
+          // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme),
         ),
         darkTheme: ThemeData(
           useMaterial3: true,
           colorSchemeSeed: colorOptions[colorSelected],
           brightness: Brightness.dark,
-          textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+          // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
         ),
         themeMode: ThemeMode.light,
         home: SafeArea(
@@ -272,26 +271,19 @@ class _MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-            // splashColor: Colors.transparent,
-            // highlightColor: Colors.transparent,
-            // hoverColor: Colors.transparent
-            ),
-        child: NavigationBar(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: _onItemTapped,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.timer),
-              label: 'Pomodoro',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-        ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _onItemTapped,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.timer),
+            label: 'Pomodoro',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
       ),
       appBar: AppBar(
         title: Text(widget.title),
@@ -306,9 +298,7 @@ class _MainState extends State<Main> {
                     widget.changeDarModeEnabled(Get.isDarkMode);
                   });
                 },
-                icon: widget.darkModeEnabled
-                    ? const Icon(Icons.dark_mode, size: 18)
-                    : const Icon(Icons.sunny, size: 18)),
+                icon: widget.darkModeEnabled ? const Icon(Icons.dark_mode, size: 18) : const Icon(Icons.sunny, size: 18)),
           ),
           PopupMenuButton(
             tooltip: "Show color menu",

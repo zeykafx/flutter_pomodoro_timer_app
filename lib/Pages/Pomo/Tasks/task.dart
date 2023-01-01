@@ -1,10 +1,6 @@
 import 'package:enum_to_string/enum_to_string.dart';
 
-enum TaskType {
-  done,
-  inProgress,
-  notStarted
-}
+enum TaskType { done, inProgress, notStarted }
 
 class Task {
   int id;

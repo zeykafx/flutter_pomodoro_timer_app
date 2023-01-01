@@ -36,7 +36,9 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
                   min: 5,
                   max: 60,
                   divisions: 11,
-                  label: settingsController.defaultMinutes.value.round().toString(),
+                  label: settingsController.defaultMinutes.value
+                      .round()
+                      .toString(),
                   onChanged: (double nValue) {
                     setState(() {
                       settingsController.defaultMinutes.value = nValue.toInt();
@@ -72,11 +74,14 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
                   value: settingsController.shortBreakLength.value.toDouble(),
                   min: 1,
                   max: 20,
-                  // divisions: 5,
-                  label: settingsController.shortBreakLength.value.round().toString(),
+                  divisions: 21,
+                  label: settingsController.shortBreakLength.value
+                      .round()
+                      .toString(),
                   onChanged: (double nValue) {
                     setState(() {
-                      settingsController.shortBreakLength.value = nValue.toInt();
+                      settingsController.shortBreakLength.value =
+                          nValue.toInt();
                     });
                   },
                 ).expanded()
@@ -108,9 +113,11 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
                 Slider(
                   value: settingsController.longBreakLength.value.toDouble(),
                   min: 1,
-                  max: 20,
-                  // divisions: 5,
-                  label: settingsController.longBreakLength.value.round().toString(),
+                  max: 30,
+                  divisions: 31,
+                  label: settingsController.longBreakLength.value
+                      .round()
+                      .toString(),
                   onChanged: (double nValue) {
                     setState(() {
                       settingsController.longBreakLength.value = nValue.toInt();

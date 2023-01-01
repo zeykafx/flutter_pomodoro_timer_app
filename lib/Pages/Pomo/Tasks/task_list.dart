@@ -1,5 +1,4 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -38,7 +37,6 @@ class _TaskListState extends State<TaskList> {
             // if (task.pomosDone == task.plannedPomos) {
             //   task.changeType(TaskType.done);
             // }
-
           }
         }
         timerController.changeTimerFinished(false);
@@ -100,9 +98,9 @@ class _TaskListState extends State<TaskList> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     // Foreground color
-                    onPrimary: Theme.of(context).colorScheme.onPrimary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     // Background color
-                    primary: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                   ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
                   onPressed: () {
                     setState(() {
@@ -219,9 +217,9 @@ class _TaskListState extends State<TaskList> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     // Foreground color
-                    onPrimary: Theme.of(context).colorScheme.onPrimary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     // Background color
-                    primary: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                   ).copyWith(elevation: ButtonStyleButton.allOrNull(0.0)),
                   onPressed: () {
                     setState(() {
@@ -239,6 +237,8 @@ class _TaskListState extends State<TaskList> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colors = Theme.of(context).colorScheme;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -255,6 +255,9 @@ class _TaskListState extends State<TaskList> {
                     return GestureDetector(
                       onSecondaryTap: () => deleteTask(task),
                       child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                         tileColor: task.taskType == TaskType.inProgress ? Theme.of(context).colorScheme.onSecondary : null,
                         dense: true,
                         onLongPress: () => deleteTask(task),
@@ -266,81 +269,74 @@ class _TaskListState extends State<TaskList> {
                               decorationThickness: 3,
                               decorationColor: Theme.of(context).colorScheme.primary),
                         ),
-                        leading: task.plannedPomos > 0 ? Text("${task.pomosDone}/${task.plannedPomos}") : null,
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton.icon(
-                                onPressed: () {
-                                  if (task.taskType == TaskType.notStarted) {
-                                    setState(() {
-                                      task.changeType(TaskType.inProgress);
-                                    });
-                                  } else if (task.taskType == TaskType.inProgress) {
-                                    setState(() {
-                                      task.changeType(TaskType.done);
-                                    });
-                                  } else {
-                                    setState(() {
-                                      task.changeType(TaskType.notStarted);
-                                    });
-                                  }
+                        leading: Row(mainAxisSize: MainAxisSize.min, children: [
+                          IconButton(
+                            onPressed: () {
+                              if (task.taskType == TaskType.notStarted) {
+                                setState(() {
+                                  task.changeType(TaskType.inProgress);
+                                });
+                              } else if (task.taskType == TaskType.inProgress) {
+                                setState(() {
+                                  task.changeType(TaskType.done);
+                                });
+                              } else {
+                                setState(() {
+                                  task.changeType(TaskType.notStarted);
+                                });
+                              }
 
-                                  updateTasks();
-                                },
-                                icon: Icon(
-                                    task.taskType == TaskType.notStarted
-                                        ? FontAwesome5.hourglass_start
-                                        : task.taskType == TaskType.inProgress
-                                            ? Icons.check
-                                            : Icons.restart_alt,
-                                    size: 15),
-                                label: Text(task.taskType == TaskType.notStarted
-                                    ? "Start"
+                              updateTasks();
+                            },
+                            icon: Icon(
+                                task.taskType == TaskType.notStarted
+                                    ? FontAwesome5.hourglass_start
                                     : task.taskType == TaskType.inProgress
-                                        ? "Done"
-                                        : "Restart")),
-                            PopupMenuButton(
-                              elevation: 20,
-                              icon: const Icon(Icons.more_vert),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
-                              onSelected: (index) {
-                                if (index == 0) {
-                                  editTask(task);
-                                } else if (index == 1) {
-                                  deleteTask(task);
-                                }
-                              },
-                              itemBuilder: (BuildContext context) {
-                                return [
-                                  PopupMenuItem(
-                                      value: 0,
-                                      child: Wrap(
-                                        children: const [
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 10),
-                                            child: Icon(Icons.edit),
-                                          ),
-                                          Padding(padding: EdgeInsets.only(left: 20), child: Text("Edit"))
-                                        ],
-                                      )),
-                                  PopupMenuItem(
-                                      value: 1,
-                                      child: Wrap(
-                                        children: const [
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 10),
-                                            child: Icon(Icons.delete),
-                                          ),
-                                          Padding(padding: EdgeInsets.only(left: 20), child: Text("Delete"))
-                                        ],
-                                      )),
-                                ];
-                              },
-                            )
-                          ],
+                                        ? Icons.check
+                                        : Icons.restart_alt,
+                                size: 18),
+                          ),
+                          if (task.plannedPomos > 0) Text("${task.pomosDone}/${task.plannedPomos}"),
+                        ]),
+                        trailing: PopupMenuButton(
+                          elevation: 20,
+                          icon: const Icon(Icons.more_vert),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
+                          onSelected: (index) {
+                            if (index == 0) {
+                              editTask(task);
+                            } else if (index == 1) {
+                              deleteTask(task);
+                            }
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              PopupMenuItem(
+                                  value: 0,
+                                  child: Wrap(
+                                    children: const [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Icon(Icons.edit),
+                                      ),
+                                      Padding(padding: EdgeInsets.only(left: 20), child: Text("Edit"))
+                                    ],
+                                  )),
+                              PopupMenuItem(
+                                  value: 1,
+                                  child: Wrap(
+                                    children: const [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Icon(Icons.delete),
+                                      ),
+                                      Padding(padding: EdgeInsets.only(left: 20), child: Text("Delete"))
+                                    ],
+                                  )),
+                            ];
+                          },
                         ),
                       ),
                     );
