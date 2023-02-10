@@ -1,5 +1,6 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
@@ -359,7 +360,7 @@ class _TaskListState extends State<TaskList> {
                   size: 20,
                 )),
           ),
-      ],
+      ].animate(interval: 100.ms).fade(duration: 200.ms),
     );
   }
 }

@@ -17,12 +17,14 @@ class StartStopButton extends StatefulWidget {
       required this.startTimer,
       required this.updateFormattedTimeLeftString,
       required this.resetTimer,
+      required this.defaultMinutes,
       required this.getTimeLeft})
       : super(key: key);
 
   final Timer timer;
   final Function startTimer;
   final void Function(int) resetTimer;
+  final int defaultMinutes;
   final Duration Function() getTimeLeft;
   final Function updateFormattedTimeLeftString;
 
@@ -57,8 +59,8 @@ class _StartStopButtonState extends State<StartStopButton> {
               }
             }
           } else {
-            if (widget.getTimeLeft().inMinutes == 0) {
-              widget.resetTimer(settingsController.defaultMinutes.value);
+            if (widget.getTimeLeft().inMinutes.abs() == 0) {
+              widget.resetTimer(widget.defaultMinutes);
             }
 
             // else start the timer and block the sites in the list

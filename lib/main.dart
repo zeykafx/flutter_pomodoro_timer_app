@@ -1,6 +1,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -9,7 +10,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'Pages/Pomo/pomo_page.dart';
 import 'Pages/Settings/settings_page.dart';
 
+
+
 main() async {
+  Animate.restartOnHotReload=true;
+
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   await Future.delayed(const Duration(milliseconds: 300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
@@ -20,6 +25,7 @@ main() async {
     });
   }
   runApp(const MyApp());
+
 }
 
 const List<Color> colorOptions = [
@@ -76,14 +82,11 @@ class _MyAppState extends State<MyApp> {
     const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
     );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: selectNotification);
+    await flutterLocalNotificationsPlugin.initialize(
+        initializationSettings,
+    );
   }
 
-  void selectNotification(String? payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-  }
 
   void changeDarModeEnabled(bool newVal) {
     setState(() {
@@ -104,7 +107,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-        debugShowCheckedModeBanner: false,
         title: 'Pomo Focus',
         theme: ThemeData(
           useMaterial3: true,

@@ -8,7 +8,7 @@ import Foundation
 import audioplayers_darwin
 import bitsdojo_window_macos
 import flutter_local_notifications
-import path_provider_macos
+import path_provider_foundation
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AudioplayersDarwinPlugin.register(with: registry.registrar(forPlugin: "AudioplayersDarwinPlugin"))
