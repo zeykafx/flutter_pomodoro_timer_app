@@ -68,11 +68,9 @@ class PomoSession {
       endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
       currentPhase = PomoSessionPhase.working;
     } else if (currentPhase == PomoSessionPhase.shortBreak) {
-      endTimestamp =
-          getDateTime().add(DateTime.now().add(Duration(seconds: shortBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: shortBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     } else if (currentPhase == PomoSessionPhase.longBreak) {
-      endTimestamp =
-          getDateTime().add(DateTime.now().add(Duration(seconds: longBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: longBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
     }
 
     timerController.changeTimerFinished(false);

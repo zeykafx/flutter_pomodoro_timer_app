@@ -19,12 +19,16 @@ class _TaskInputState extends State<TaskInput> {
   // the hint text in the text field is gonna be random on each reload, it adds a nice touch to it imo
   List<String> hintTexts = [
     "Study discrete math",
-    "Finish pomodoro app",
     "Clean the apartment",
     "Study history",
     "Meetings",
     "Walk the dog",
-    "Finish presentation"
+    "Finish presentation",
+    "Do the dishes",
+    "Do the laundry",
+    "Go to the gym",
+    "Go to the supermarket",
+    "Daily meeting",
   ];
   Random random = Random();
   late int hintIdx;

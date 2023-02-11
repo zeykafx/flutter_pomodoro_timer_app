@@ -58,6 +58,7 @@ class _PomoState extends State<Pomo> {
 
     getPreviousPomoLength();
 
+    isTimerFinished = false;
     startTimer();
     updateFormattedTimeLeftString();
     if (widget.pageChanged == false) {
@@ -96,7 +97,8 @@ class _PomoState extends State<Pomo> {
     if (!kIsWeb && !Platform.isWindows) {
       flutterLocalNotificationsPlugin.cancelAll();
     }
-    if (isTimerFinished) {
+
+    if (isTimerFinished && widget.pageChanged == true) {
       resetTimer(pomoSession.currentPhase == PomoSessionPhase.working ? settingsController.defaultMinutes.value : pomoSession.currentPhase == PomoSessionPhase.shortBreak ? settingsController.shortBreakLength.value : settingsController.longBreakLength.value);
     }
 
@@ -104,7 +106,7 @@ class _PomoState extends State<Pomo> {
       pomoSession.start();
       timer = Timer.periodic(const Duration(milliseconds: 1000), (Timer t) {
         updateFormattedTimeLeftString();
-        print("Timer is running, isTimerFinished: $isTimerFinished, time left: ${pomoSession.getDateTime().difference(DateTime.now())}");
+        // print("Timer is running, isTimerFinished: $isTimerFinished, time left: ${pomoSession.getDateTime().difference(DateTime.now())}");
         // if (!isTimerFinished) {
           isTimerFinished = isTimerDone();
         // }
@@ -157,8 +159,9 @@ class _PomoState extends State<Pomo> {
   }
 
   void resetTimer(int minutes) {
+    pomoSession.resetTimer(minutes);
+
     setState(() {
-      pomoSession.resetTimer(minutes);
       box.write("pomoLengthSeconds", pomoSession.pomoLengthSeconds);
       isTimerFinished = false;
       if (!kIsWeb && !Platform.isWindows && timer.isActive) {
@@ -188,7 +191,7 @@ class _PomoState extends State<Pomo> {
   bool isTimerDone() {
     DateTime timestampDate = pomoSession.getDateTime();
 
-    print(DateTime.now().compareTo(timestampDate));
+    // print(DateTime.now().compareTo(timestampDate));
     if (DateTime.now().compareTo(timestampDate) >= 0) {
       player.play(AssetSource("audio/notification_sound.mp3"));
 
@@ -261,8 +264,8 @@ class _PomoState extends State<Pomo> {
             [
               IconButton(
                       onPressed: () => incrementTimeStamp(1),
-                      icon: const Icon(FontAwesome5.plus, size: 18))
-                  .paddingDirectional(vertical: 5),
+                      icon: const Icon(FontAwesome5.plus, size: 18)
+              ).paddingDirectional(vertical: 5),
               IconButton(
                   onPressed: () => decrementTimeStamp(1),
                   icon: const Icon(
