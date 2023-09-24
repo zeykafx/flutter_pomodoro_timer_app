@@ -91,11 +91,14 @@ class _TaskInputState extends State<TaskInput> {
     ColorScheme colors = Theme.of(context).colorScheme;
 
     return Flex(
-      direction:
-          mediaQuerySize.width < columnWidth ? Axis.vertical : Axis.horizontal,
+      direction: Axis.horizontal,
       children: [
-        wrapInExpanded(
-            TextField(
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 4,
+            ),
+            child: TextField(
               controller: textEditingController,
               onTap: () {
                 setState(() {
@@ -114,12 +117,13 @@ class _TaskInputState extends State<TaskInput> {
                 // prefixIcon: const Icon(Icons.add),
                 border: const OutlineInputBorder(),
                 hintText: hintTexts[hintIdx],
-                labelText: "Enter a task",
+                labelText: "Enter a task and the n° of sessions",
               ),
             ),
-            mediaQuerySize.width),
+          ),
+        ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+          padding: const EdgeInsets.symmetric(vertical: 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -127,25 +131,25 @@ class _TaskInputState extends State<TaskInput> {
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                 child: Column(
                   children: [
-                    const Text("N° of sessions"),
+                    // const Text("Sessions"),
                     [
                       InkWell(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(30)),
-                        child: const Icon(Icons.arrow_drop_down, size: 45),
-                        onTap: () => decrementNumberOfPomos(1),
+                        child: const Icon(Icons.arrow_drop_up, size: 35),
+                        onTap: () => incrementNumberOfPomos(1),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: const EdgeInsets.all(0),
                         child: Text("$numberOfPomos"),
                       ),
                       InkWell(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(30)),
-                        child: const Icon(Icons.arrow_drop_up, size: 45),
-                        onTap: () => incrementNumberOfPomos(1),
+                        child: const Icon(Icons.arrow_drop_down, size: 35),
+                        onTap: () => decrementNumberOfPomos(1),
                       ),
-                    ].toRow(
+                    ].toColumn(
                         mainAxisAlignment: MainAxisAlignment.center,
                         separator: const Padding(padding: EdgeInsets.all(0))),
                   ],

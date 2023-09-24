@@ -256,144 +256,151 @@ class _TaskListState extends State<TaskList> {
   Widget build(BuildContext context) {
     ColorScheme colors = Theme.of(context).colorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Material(
-            elevation: 10,
-            shadowColor: Colors.transparent,
-            child: TaskInput(taskListFunction: taskListCallback)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 4,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Material(
+              elevation: 10,
+              shadowColor: Colors.transparent,
+              child: TaskInput(taskListFunction: taskListCallback)),
 
-        // list view
-        Expanded(
-          child: taskList.isNotEmpty
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: taskList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Task task = taskList[index];
+          // list view
+          Expanded(
+            child: taskList.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: taskList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Task task = taskList[index];
 
-                    return GestureDetector(
-                      onSecondaryTap: () => deleteTask(task),
-                      child: ListTile(
-                        key: UniqueKey(),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        tileColor: task.taskType == TaskType.inProgress
-                            ? Theme.of(context).colorScheme.secondaryContainer
-                            : null,
-                        dense: true,
-                        onLongPress: () => deleteTask(task),
-                        onTap: () => editTask(task),
-                        title: Text(
-                          task.content,
-                          style: TextStyle(
-                              decoration: task.taskType == TaskType.done
-                                  ? TextDecoration.lineThrough
-                                  : TextDecoration.none,
-                              decorationThickness: 3,
-                              decorationColor:
-                                  Theme.of(context).colorScheme.primary),
-                        ),
-                        leading: Row(mainAxisSize: MainAxisSize.min, children: [
-                          IconButton(
-                            onPressed: () {
-                              if (task.taskType == TaskType.notStarted) {
-                                setState(() {
-                                  task.changeType(TaskType.inProgress);
-                                });
-                              } else if (task.taskType == TaskType.inProgress) {
-                                setState(() {
-                                  task.changeType(TaskType.done);
-                                });
-                              } else {
-                                setState(() {
-                                  task.changeType(TaskType.notStarted);
-                                });
-                              }
-
-                              updateTasks();
-                            },
-                            icon: Icon(
-                                task.taskType == TaskType.notStarted
-                                    ? FontAwesome5.hourglass_start
-                                    : task.taskType == TaskType.inProgress
-                                        ? Icons.check
-                                        : Icons.restart_alt,
-                                size: 18),
-                          ),
-                          if (task.plannedPomos > 0)
-                            Text("${task.pomosDone}/${task.plannedPomos}"),
-                        ]),
-                        trailing: PopupMenuButton(
-                          elevation: 20,
-                          icon: const Icon(Icons.more_vert),
+                      return GestureDetector(
+                        onSecondaryTap: () => deleteTask(task),
+                        child: ListTile(
+                          key: UniqueKey(),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryContainer,
-                                  width: 0.3)),
-                          onSelected: (index) {
-                            if (index == 0) {
-                              editTask(task);
-                            } else if (index == 1) {
-                              deleteTask(task);
-                            }
-                          },
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              const PopupMenuItem(
-                                  value: 0,
-                                  child: Wrap(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Icon(Icons.edit),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                          child: Text("Edit"))
-                                    ],
-                                  )),
-                              const PopupMenuItem(
-                                  value: 1,
-                                  child: Wrap(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Icon(Icons.delete),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                          child: Text("Delete"))
-                                    ],
-                                  )),
-                            ];
-                          },
-                        ),
-                      ),
-                    );
-                  })
-              : const Center(
-                  child: Text("No tasks"),
-                ),
-        ),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          tileColor: task.taskType == TaskType.inProgress
+                              ? Theme.of(context).colorScheme.secondaryContainer
+                              : null,
+                          dense: true,
+                          onLongPress: () => deleteTask(task),
+                          onTap: () => editTask(task),
+                          title: Text(
+                            task.content,
+                            style: TextStyle(
+                                decoration: task.taskType == TaskType.done
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                                decorationThickness: 3,
+                                decorationColor:
+                                    Theme.of(context).colorScheme.primary),
+                          ),
+                          leading:
+                              Row(mainAxisSize: MainAxisSize.min, children: [
+                            IconButton(
+                              onPressed: () {
+                                if (task.taskType == TaskType.notStarted) {
+                                  setState(() {
+                                    task.changeType(TaskType.inProgress);
+                                  });
+                                } else if (task.taskType ==
+                                    TaskType.inProgress) {
+                                  setState(() {
+                                    task.changeType(TaskType.done);
+                                  });
+                                } else {
+                                  setState(() {
+                                    task.changeType(TaskType.notStarted);
+                                  });
+                                }
 
-        if (taskList.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton.icon(
-                label: const Text("Clear"),
-                onPressed: () => clearTaskList(context),
-                icon: const Icon(
-                  FontAwesome5.trash,
-                  size: 20,
-                )),
+                                updateTasks();
+                              },
+                              icon: Icon(
+                                  task.taskType == TaskType.notStarted
+                                      ? FontAwesome5.hourglass_start
+                                      : task.taskType == TaskType.inProgress
+                                          ? Icons.check
+                                          : Icons.restart_alt,
+                                  size: 18),
+                            ),
+                            if (task.plannedPomos > 0)
+                              Text("${task.pomosDone}/${task.plannedPomos}"),
+                          ]),
+                          trailing: PopupMenuButton(
+                            elevation: 20,
+                            icon: const Icon(Icons.more_vert),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                    width: 0.3)),
+                            onSelected: (index) {
+                              if (index == 0) {
+                                editTask(task);
+                              } else if (index == 1) {
+                                deleteTask(task);
+                              }
+                            },
+                            itemBuilder: (BuildContext context) {
+                              return [
+                                const PopupMenuItem(
+                                    value: 0,
+                                    child: Wrap(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                          child: Icon(Icons.edit),
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(left: 20),
+                                            child: Text("Edit"))
+                                      ],
+                                    )),
+                                const PopupMenuItem(
+                                    value: 1,
+                                    child: Wrap(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                          child: Icon(Icons.delete),
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(left: 20),
+                                            child: Text("Delete"))
+                                      ],
+                                    )),
+                              ];
+                            },
+                          ),
+                        ),
+                      );
+                    })
+                : const Center(
+                    child: Text("No tasks"),
+                  ),
           ),
-      ].animate(interval: 100.ms).fade(duration: 200.ms),
+
+          if (taskList.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton.icon(
+                  label: const Text("Clear"),
+                  onPressed: () => clearTaskList(context),
+                  icon: const Icon(
+                    FontAwesome5.trash,
+                    size: 20,
+                  )),
+            ),
+        ].animate(interval: 100.ms).fade(duration: 200.ms),
+      ),
     );
   }
 }

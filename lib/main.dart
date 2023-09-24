@@ -1,6 +1,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,11 @@ main() async {
 
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
+
+  // prevent landscape mode
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   await Future.delayed(const Duration(
       milliseconds:
           300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
@@ -100,6 +106,11 @@ class _MyAppState extends State<MyApp> {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
+
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestPermission();
   }
 
   void changeDarModeEnabled(bool newVal) {
@@ -124,6 +135,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    Size mediaQuerySize = MediaQuery.of(context).size;
+    if (mediaQuerySize.width > 500) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight
+      ]);
+    }
+
     return GetMaterialApp(
         title: 'Pomo Focus',
         theme: ThemeData(

@@ -138,6 +138,7 @@ class _PomoState extends State<Pomo> {
       enableVibration: false,
       playSound: false,
       showProgress: true,
+      ongoing: true,
       progress: pomoSession.sessionProgress.toInt(),
       maxProgress: 100,
     );
@@ -156,10 +157,11 @@ class _PomoState extends State<Pomo> {
         AndroidNotificationDetails(
       'pomo focus',
       'main',
-      channelDescription: 'Pomo focus',
+      channelDescription: 'Pomo Focus',
       importance: Importance.max,
       priority: Priority.max,
       usesChronometer: false,
+      onlyAlertOnce: true,
     );
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -251,14 +253,19 @@ class _PomoState extends State<Pomo> {
     return timeLeftString;
   }
 
+  int columnWidth = 500;
+
   @override
   Widget build(BuildContext context) {
+    Size mediaQuerySize = MediaQuery.of(context).size;
+
     return Center(
       child: [
         [
           Text(
             pomoSession.timeLeftString,
-            style: const TextStyle(fontSize: 45),
+            style: TextStyle(
+                fontSize: mediaQuerySize.width < columnWidth ? 35 : 45),
           ),
           [
             // reset and start/stop button
@@ -272,36 +279,44 @@ class _PomoState extends State<Pomo> {
                         : settingsController.longBreakLength.value,
                 updateFormattedTimeLeftString: updateFormattedTimeLeftString,
                 resetTimer: resetTimer,
-              ).paddingAll(5),
-
+              ).paddingDirectional(vertical: 5),
               StartStopButton(
-                  timer: timer,
-                  startTimer: startTimer,
-                  updateFormattedTimeLeftString: updateFormattedTimeLeftString,
-                  defaultMinutes: pomoSession.currentPhase ==
-                          PomoSessionPhase.working
-                      ? settingsController.defaultMinutes.value
-                      : pomoSession.currentPhase == PomoSessionPhase.shortBreak
-                          ? settingsController.shortBreakLength.value
-                          : settingsController.longBreakLength.value,
-                  resetTimer: resetTimer,
-                  getTimeLeft: pomoSession.getTimeLeft),
-              // .paddingAll(5),
-            ].toColumn(),
+                timer: timer,
+                startTimer: startTimer,
+                updateFormattedTimeLeftString: updateFormattedTimeLeftString,
+                defaultMinutes: pomoSession.currentPhase ==
+                        PomoSessionPhase.working
+                    ? settingsController.defaultMinutes.value
+                    : pomoSession.currentPhase == PomoSessionPhase.shortBreak
+                        ? settingsController.shortBreakLength.value
+                        : settingsController.longBreakLength.value,
+                resetTimer: resetTimer,
+                getTimeLeft: pomoSession.getTimeLeft,
+              ).paddingSymmetric(vertical: 0),
+            ].toColumn(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center),
 
             // up and down buttons
-            [
-              IconButton(
-                      onPressed: () => incrementTimeStamp(1),
-                      icon: const Icon(FontAwesome5.plus, size: 18))
-                  .paddingDirectional(vertical: 5),
-              IconButton(
+            Visibility(
+              visible: timer.isActive,
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              child: [
+                IconButton(
+                        onPressed: () => incrementTimeStamp(1),
+                        icon: const Icon(FontAwesome5.plus, size: 15))
+                    .paddingDirectional(vertical: 5),
+                IconButton(
                   onPressed: () => decrementTimeStamp(1),
                   icon: const Icon(
                     FontAwesome5.minus,
-                    size: 18,
-                  )),
-            ].toColumn().opacity(timer.isActive ? 1 : 0),
+                    size: 15,
+                  ),
+                ),
+              ].toColumn(),
+            ),
           ].toRow(
               mainAxisAlignment: MainAxisAlignment.center,
               separator: const Padding(padding: EdgeInsets.all(0))),

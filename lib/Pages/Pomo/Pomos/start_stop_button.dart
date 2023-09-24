@@ -8,7 +8,8 @@ import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/site_blocker.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
 import 'package:get/get.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 class StartStopButton extends StatefulWidget {
   const StartStopButton(
@@ -74,7 +75,9 @@ class _StartStopButtonState extends State<StartStopButton> {
           widget.updateFormattedTimeLeftString();
         });
       },
-      icon: widget.timer.isActive ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+      icon: widget.timer.isActive
+          ? const Icon(Icons.pause, size: 20)
+          : const Icon(Icons.play_arrow, size: 20),
       // label: widget.timer.isActive ? const Text("Stop") : const Text("Start")
     );
   }

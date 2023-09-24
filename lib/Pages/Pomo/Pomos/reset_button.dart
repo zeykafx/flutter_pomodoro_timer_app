@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class ResetButton extends StatelessWidget {
   const ResetButton(
@@ -19,7 +18,7 @@ class ResetButton extends StatelessWidget {
 
     return IconButton(
       tooltip: "Reset Timer",
-      icon: const Icon(Icons.restart_alt),
+      icon: const Icon(Icons.restart_alt, size: 20),
       onPressed: () {
         resetTimer(defaultMinutes);
         updateFormattedTimeLeftString();
