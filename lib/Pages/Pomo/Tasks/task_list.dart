@@ -56,7 +56,8 @@ class _TaskListState extends State<TaskList> {
       Task task = Task(
           id: singleTask["id"],
           content: singleTask["content"],
-          taskType: EnumToString.fromString(TaskType.values, singleTask["taskType"])!,
+          taskType:
+              EnumToString.fromString(TaskType.values, singleTask["taskType"])!,
           pomosDone: singleTask["pomosDone"],
           plannedPomos: singleTask["plannedPomos"]);
       taskList.add(task);
@@ -124,7 +125,11 @@ class _TaskListState extends State<TaskList> {
             title: Text("Delete task N°${task.id + 1}?"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [const Text("Do you really want to delete this task?"), Text("\"${task.content}\"")],
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Do you really want to delete this task?"),
+                Text("\"${task.content}\"")
+              ],
             ),
             actions: [
               TextButton(
@@ -153,13 +158,15 @@ class _TaskListState extends State<TaskList> {
   void editTask(Task task) {
     textEditingController.text = task.content;
 
-    void incrementNumberOfPomos(int number, void Function(void Function()) setState) {
+    void incrementNumberOfPomos(
+        int number, void Function(void Function()) setState) {
       setState(() {
         task.plannedPomos += number;
       });
     }
 
-    void decrementNumberOfPomos(int number, void Function(void Function()) setState) {
+    void decrementNumberOfPomos(
+        int number, void Function(void Function()) setState) {
       if (task.plannedPomos > 0) {
         incrementNumberOfPomos(-number, setState);
       }
@@ -169,32 +176,43 @@ class _TaskListState extends State<TaskList> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Edit task N°${task.id + 1}?"),
-            content: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) setState) {
+            title: Text("Edit task N°${task.id + 1}"),
+            content: StatefulBuilder(builder: (BuildContext context,
+                void Function(void Function()) setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text("New number of planned pomos:"),
-                  [
-                    InkWell(
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      child: const Icon(Icons.arrow_drop_down, size: 40),
-                      onTap: () => decrementNumberOfPomos(1, setState),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text("${task.plannedPomos}"),
-                    ),
-                    InkWell(
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      child: const Icon(Icons.arrow_drop_up, size: 40),
-                      onTap: () => incrementNumberOfPomos(1, setState),
-                    ),
-                  ].toRow(mainAxisAlignment: MainAxisAlignment.center, separator: const Padding(padding: EdgeInsets.all(0))),
+                  Row(
+                    children: [
+                      const Text("Change N° of sessions:"),
+                      [
+                        InkWell(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          child: const Icon(Icons.arrow_drop_down, size: 40),
+                          onTap: () => decrementNumberOfPomos(1, setState),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text("${task.plannedPomos}"),
+                        ),
+                        InkWell(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          child: const Icon(Icons.arrow_drop_up, size: 40),
+                          onTap: () => incrementNumberOfPomos(1, setState),
+                        ),
+                      ].toRow(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          separator: const Padding(padding: EdgeInsets.all(1))),
+                    ],
+                  ),
+
                   // text field for new content
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
                     child: TextField(
                       controller: textEditingController,
                       decoration: const InputDecoration(
@@ -241,9 +259,12 @@ class _TaskListState extends State<TaskList> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Material(elevation: 10, shadowColor: Colors.transparent, child: TaskInput(taskListFunction: taskListCallback)),
-        
-		// list view
+        Material(
+            elevation: 10,
+            shadowColor: Colors.transparent,
+            child: TaskInput(taskListFunction: taskListCallback)),
+
+        // list view
         Expanded(
           child: taskList.isNotEmpty
               ? ListView.builder(
@@ -259,16 +280,21 @@ class _TaskListState extends State<TaskList> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        tileColor: task.taskType == TaskType.inProgress ? Theme.of(context).colorScheme.onSecondary : null,
+                        tileColor: task.taskType == TaskType.inProgress
+                            ? Theme.of(context).colorScheme.secondaryContainer
+                            : null,
                         dense: true,
                         onLongPress: () => deleteTask(task),
                         onTap: () => editTask(task),
                         title: Text(
                           task.content,
                           style: TextStyle(
-                              decoration: task.taskType == TaskType.done ? TextDecoration.lineThrough : TextDecoration.none,
+                              decoration: task.taskType == TaskType.done
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
                               decorationThickness: 3,
-                              decorationColor: Theme.of(context).colorScheme.primary),
+                              decorationColor:
+                                  Theme.of(context).colorScheme.primary),
                         ),
                         leading: Row(mainAxisSize: MainAxisSize.min, children: [
                           IconButton(
@@ -297,14 +323,19 @@ class _TaskListState extends State<TaskList> {
                                         : Icons.restart_alt,
                                 size: 18),
                           ),
-                          if (task.plannedPomos > 0) Text("${task.pomosDone}/${task.plannedPomos}"),
+                          if (task.plannedPomos > 0)
+                            Text("${task.pomosDone}/${task.plannedPomos}"),
                         ]),
                         trailing: PopupMenuButton(
                           elevation: 20,
                           icon: const Icon(Icons.more_vert),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
+                              side: BorderSide(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                                  width: 0.3)),
                           onSelected: (index) {
                             if (index == 0) {
                               editTask(task);
@@ -314,26 +345,30 @@ class _TaskListState extends State<TaskList> {
                           },
                           itemBuilder: (BuildContext context) {
                             return [
-                              PopupMenuItem(
+                              const PopupMenuItem(
                                   value: 0,
                                   child: Wrap(
-                                    children: const [
+                                    children: [
                                       Padding(
                                         padding: EdgeInsets.only(left: 10),
                                         child: Icon(Icons.edit),
                                       ),
-                                      Padding(padding: EdgeInsets.only(left: 20), child: Text("Edit"))
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                          child: Text("Edit"))
                                     ],
                                   )),
-                              PopupMenuItem(
+                              const PopupMenuItem(
                                   value: 1,
                                   child: Wrap(
-                                    children: const [
+                                    children: [
                                       Padding(
                                         padding: EdgeInsets.only(left: 10),
                                         child: Icon(Icons.delete),
                                       ),
-                                      Padding(padding: EdgeInsets.only(left: 20), child: Text("Delete"))
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                          child: Text("Delete"))
                                     ],
                                   )),
                             ];

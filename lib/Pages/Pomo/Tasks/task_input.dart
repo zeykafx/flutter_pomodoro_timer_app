@@ -91,7 +91,8 @@ class _TaskInputState extends State<TaskInput> {
     ColorScheme colors = Theme.of(context).colorScheme;
 
     return Flex(
-      direction: mediaQuerySize.width < columnWidth ? Axis.vertical : Axis.horizontal,
+      direction:
+          mediaQuerySize.width < columnWidth ? Axis.vertical : Axis.horizontal,
       children: [
         wrapInExpanded(
             TextField(
@@ -126,10 +127,11 @@ class _TaskInputState extends State<TaskInput> {
                 padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                 child: Column(
                   children: [
-                    const Text("N° of pomos"),
+                    const Text("N° of sessions"),
                     [
                       InkWell(
-                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
                         child: const Icon(Icons.arrow_drop_down, size: 45),
                         onTap: () => decrementNumberOfPomos(1),
                       ),
@@ -138,11 +140,14 @@ class _TaskInputState extends State<TaskInput> {
                         child: Text("$numberOfPomos"),
                       ),
                       InkWell(
-                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
                         child: const Icon(Icons.arrow_drop_up, size: 45),
                         onTap: () => incrementNumberOfPomos(1),
                       ),
-                    ].toRow(mainAxisAlignment: MainAxisAlignment.center, separator: const Padding(padding: EdgeInsets.all(0))),
+                    ].toRow(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        separator: const Padding(padding: EdgeInsets.all(0))),
                   ],
                 ),
               ),

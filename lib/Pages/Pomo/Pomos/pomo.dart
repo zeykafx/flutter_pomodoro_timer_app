@@ -44,6 +44,8 @@ class PomoSession {
   String timeLeftString = "";
   int shortBreaksDone = 0;
 
+  double sessionProgress = 0;
+
   PomoSession(
       {required this.remainingSessions,
       required this.workLengthSeconds,
@@ -64,13 +66,26 @@ class PomoSession {
   TimerController timerController = Get.put(TimerController());
 
   void start() {
-    if (currentPhase == PomoSessionPhase.stopped || currentPhase == PomoSessionPhase.working) {
-      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+    if (currentPhase == PomoSessionPhase.stopped ||
+        currentPhase == PomoSessionPhase.working) {
+      endTimestamp = getDateTime()
+          .add(DateTime.now()
+              .add(Duration(seconds: pomoLengthSeconds))
+              .difference(getDateTime()))
+          .millisecondsSinceEpoch;
       currentPhase = PomoSessionPhase.working;
     } else if (currentPhase == PomoSessionPhase.shortBreak) {
-      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: shortBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime()
+          .add(DateTime.now()
+              .add(Duration(seconds: shortBreakLengthSeconds))
+              .difference(getDateTime()))
+          .millisecondsSinceEpoch;
     } else if (currentPhase == PomoSessionPhase.longBreak) {
-      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: longBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime()
+          .add(DateTime.now()
+              .add(Duration(seconds: longBreakLengthSeconds))
+              .difference(getDateTime()))
+          .millisecondsSinceEpoch;
     }
 
     timerController.changeTimerFinished(false);
@@ -88,13 +103,23 @@ class PomoSession {
 
       case PomoSessionPhase.longBreak:
         currentPhase = PomoSessionPhase.working;
-        endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+        pomoLengthSeconds = settingsController.defaultMinutes.value * 60;
+        endTimestamp = getDateTime()
+            .add(DateTime.now()
+                .add(Duration(seconds: pomoLengthSeconds))
+                .difference(getDateTime()))
+            .millisecondsSinceEpoch;
         break;
 
       case PomoSessionPhase.shortBreak:
         shortBreaksDone++;
         currentPhase = PomoSessionPhase.working;
-        endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+        pomoLengthSeconds = settingsController.defaultMinutes.value * 60;
+        endTimestamp = getDateTime()
+            .add(DateTime.now()
+                .add(Duration(seconds: pomoLengthSeconds))
+                .difference(getDateTime()))
+            .millisecondsSinceEpoch;
 
         break;
 
@@ -102,13 +127,26 @@ class PomoSession {
         remainingSessions--;
         if (shortBreaksDone == shortBreaksLeftBeforeLong) {
           currentPhase = PomoSessionPhase.longBreak;
-          endTimestamp =
-              getDateTime().add(DateTime.now().add(Duration(seconds: longBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+          longBreakLengthSeconds =
+              settingsController.longBreakLength.value * 60;
+
+          endTimestamp = getDateTime()
+              .add(DateTime.now()
+                  .add(Duration(seconds: longBreakLengthSeconds))
+                  .difference(getDateTime()))
+              .millisecondsSinceEpoch;
 
           shortBreaksDone = 0;
         } else {
           currentPhase = PomoSessionPhase.shortBreak;
-          endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: shortBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+          shortBreakLengthSeconds =
+              settingsController.shortBreakLength.value * 60;
+
+          endTimestamp = getDateTime()
+              .add(DateTime.now()
+                  .add(Duration(seconds: shortBreakLengthSeconds))
+                  .difference(getDateTime()))
+              .millisecondsSinceEpoch;
         }
         break;
     }
@@ -116,7 +154,8 @@ class PomoSession {
 
   void resetTimer(int minutes) {
     start();
-    endTimestamp = DateTime.now().add(Duration(minutes: minutes)).millisecondsSinceEpoch;
+    endTimestamp =
+        DateTime.now().add(Duration(minutes: minutes)).millisecondsSinceEpoch;
     if (currentPhase == PomoSessionPhase.working) {
       pomoLengthSeconds = Duration(minutes: minutes).inSeconds;
     } else if (currentPhase == PomoSessionPhase.shortBreak) {
@@ -130,13 +169,25 @@ class PomoSession {
   void incrementTimeStamp(int minutes, Timer timer) {
     if (currentPhase == PomoSessionPhase.working) {
       pomoLengthSeconds += Duration(minutes: minutes).inSeconds;
-      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: pomoLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime()
+          .add(DateTime.now()
+              .add(Duration(seconds: pomoLengthSeconds))
+              .difference(getDateTime()))
+          .millisecondsSinceEpoch;
     } else if (currentPhase == PomoSessionPhase.shortBreak) {
       shortBreakLengthSeconds += Duration(minutes: minutes).inSeconds;
-      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: shortBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime()
+          .add(DateTime.now()
+              .add(Duration(seconds: shortBreakLengthSeconds))
+              .difference(getDateTime()))
+          .millisecondsSinceEpoch;
     } else if (currentPhase == PomoSessionPhase.longBreak) {
       longBreakLengthSeconds += Duration(minutes: minutes).inSeconds;
-      endTimestamp = getDateTime().add(DateTime.now().add(Duration(seconds: longBreakLengthSeconds)).difference(getDateTime())).millisecondsSinceEpoch;
+      endTimestamp = getDateTime()
+          .add(DateTime.now()
+              .add(Duration(seconds: longBreakLengthSeconds))
+              .difference(getDateTime()))
+          .millisecondsSinceEpoch;
     }
     updateFormattedTimeLeftString(timer);
   }
@@ -153,10 +204,24 @@ class PomoSession {
     Duration timeLeft = getTimeLeft();
 
     if (timeLeft.inSeconds.abs() >= 0) {
+      int totalTime = Duration(
+              seconds: currentPhase == PomoSessionPhase.working
+                  ? settingsController.defaultMinutes.value * 60
+                  : currentPhase == PomoSessionPhase.shortBreak
+                      ? settingsController.shortBreakLength.value * 60
+                      : settingsController.longBreakLength.value * 60)
+          .inSeconds;
+
+      // the session progress is a scalar that goes from 0 to 100 based on the
+      // current session progress, i.e. halfway through it is 50.0,...
+      sessionProgress =
+          ((totalTime - timeLeft.inSeconds.abs()) / totalTime) * 100;
+
       timeLeftString = timeLeft.toString().substring(0, 7);
     } else {
       // 0:00:00
-      timeLeftString = DateTime.now().difference(DateTime.now()).toString().substring(0, 7);
+      timeLeftString =
+          DateTime.now().difference(DateTime.now()).toString().substring(0, 7);
       // timer.cancel(); // cancel the timer since the pomo is done
     }
     return timeLeftString;

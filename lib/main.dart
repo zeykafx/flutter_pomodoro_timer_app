@@ -5,52 +5,62 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'Pages/Pomo/pomo_page.dart';
 import 'Pages/Settings/settings_page.dart';
 
-
-
 main() async {
-  Animate.restartOnHotReload=true;
+  Animate.restartOnHotReload = true;
 
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(const Duration(milliseconds: 300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
-  if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS].contains(defaultTargetPlatform)) {
+  await Future.delayed(const Duration(
+      milliseconds:
+          300)); // HACK: fix for https://github.com/flutter/flutter/issues/101007
+  if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]
+      .contains(defaultTargetPlatform)) {
     doWhenWindowReady(() {
       // appWindow.alignment = Alignment.center;
       appWindow.show();
     });
   }
   runApp(const MyApp());
-
 }
 
 const List<Color> colorOptions = [
-  Color.fromRGBO(44, 62, 80, 1.0),
+  Colors.blue,
+  Colors.lightBlueAccent,
   Colors.teal,
+  Colors.lime,
+  Colors.greenAccent,
   Colors.green,
   Colors.yellow,
   Colors.orange,
+  Colors.deepOrange,
   Colors.pink,
   Colors.purple,
+  Colors.purpleAccent,
   Colors.red,
 ];
 
 const List<String> colorText = <String>[
-  "Default Blue",
+  "Blue",
+  "Light Blue",
   "Teal",
+  "Lime",
+  "Light Green",
   "Green",
   "Yellow",
   "Orange",
+  "Deep Orange",
   "Pink",
   "Purple",
+  "Light Purple",
   "Red",
 ];
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -70,6 +80,8 @@ class _MyAppState extends State<MyApp> {
       Get.changeThemeMode(ThemeMode.dark);
     }
     colorSelected = box.read("colorSelected") ?? 0;
+    hasChangedColor = box.read("hasChangedColor") ?? false;
+    hasChangedDarkTheme = box.read("hasChangedDarkTheme") ?? false;
 
     initNotifs();
 
@@ -77,16 +89,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initNotifs() async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
-    const InitializationSettings initializationSettings = InitializationSettings(
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('launcher_icon');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
     );
     await flutterLocalNotificationsPlugin.initialize(
-        initializationSettings,
+      initializationSettings,
     );
   }
-
 
   void changeDarModeEnabled(bool newVal) {
     setState(() {
@@ -96,11 +110,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   int colorSelected = 0;
+  bool hasChangedColor = false;
+  bool hasChangedDarkTheme = false;
 
   void changeColorSelected(int colorIndex) {
     setState(() {
       colorSelected = colorIndex;
       box.write("colorSelected", colorSelected);
+      box.write("hasChangedColor", hasChangedColor);
+      box.write("hasChangedDarkTheme", hasChangedDarkTheme);
     });
   }
 
@@ -120,11 +138,15 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.dark,
           // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
         ),
-        themeMode: ThemeMode.light,
+        themeMode: ThemeMode.system,
         home: SafeArea(
           child: Column(
             children: [
-              if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS].contains(defaultTargetPlatform))
+              if ([
+                TargetPlatform.windows,
+                TargetPlatform.linux,
+                TargetPlatform.macOS
+              ].contains(defaultTargetPlatform))
                 WindowTitleBarBox(
                   // the builder is needed for the context to find to the correct theme data
                   child: Builder(builder: (context) {
@@ -141,7 +163,9 @@ class _MyAppState extends State<MyApp> {
                             child: DefaultTextStyle(
                               style: TextStyle(
                                 fontSize: 12,
-                                color: darkModeEnabled ? Colors.black : Colors.white,
+                                color: darkModeEnabled
+                                    ? Colors.black
+                                    : Colors.white,
                                 fontWeight: FontWeight.normal,
                               ),
                               child: const Text(
@@ -186,8 +210,12 @@ class WindowButtons extends StatelessWidget {
             iconNormal: isDarkMode ? Colors.black : Colors.white,
             iconMouseDown: isDarkMode ? Colors.black : Colors.white,
             iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.white.withOpacity(0.1),
-            mouseDown: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
+            mouseOver: isDarkMode
+                ? Colors.black.withOpacity(0.1)
+                : Colors.white.withOpacity(0.1),
+            mouseDown: isDarkMode
+                ? Colors.black.withOpacity(0.2)
+                : Colors.white.withOpacity(0.2),
           ),
         ),
         MaximizeWindowButton(
@@ -195,8 +223,12 @@ class WindowButtons extends StatelessWidget {
             iconNormal: isDarkMode ? Colors.black : Colors.white,
             iconMouseDown: isDarkMode ? Colors.black : Colors.white,
             iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.white.withOpacity(0.1),
-            mouseDown: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
+            mouseOver: isDarkMode
+                ? Colors.black.withOpacity(0.1)
+                : Colors.white.withOpacity(0.1),
+            mouseDown: isDarkMode
+                ? Colors.black.withOpacity(0.2)
+                : Colors.white.withOpacity(0.2),
           ),
         ),
         CloseWindowButton(
@@ -255,7 +287,8 @@ class _MainState extends State<Main> {
     setState(() {
       _selectedIndex = index;
       pageChanged = true;
-      pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+      pageController.animateToPage(index,
+          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     });
   }
 
@@ -296,17 +329,23 @@ class _MainState extends State<Main> {
             child: IconButton(
                 onPressed: () {
                   setState(() {
-                    Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+                    Get.changeThemeMode(
+                        Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
                     widget.changeDarModeEnabled(Get.isDarkMode);
                   });
                 },
-                icon: widget.darkModeEnabled ? const Icon(Icons.dark_mode, size: 18) : const Icon(Icons.sunny, size: 18)),
+                icon: widget.darkModeEnabled
+                    ? const Icon(Icons.dark_mode, size: 18)
+                    : const Icon(Icons.sunny, size: 18)),
           ),
           PopupMenuButton(
             tooltip: "Show color menu",
             icon: const Icon(Icons.color_lens),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    width: 0.3)),
             itemBuilder: (context) {
               return List.generate(colorOptions.length, (index) {
                 return PopupMenuItem(
@@ -316,11 +355,15 @@ class _MainState extends State<Main> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Icon(
-                            index == widget.colorSelected ? Icons.color_lens : Icons.color_lens_outlined,
+                            index == widget.colorSelected
+                                ? Icons.color_lens
+                                : Icons.color_lens_outlined,
                             color: colorOptions[index],
                           ),
                         ),
-                        Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index]))
+                        Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: Text(colorText[index]))
                       ],
                     ));
               });
