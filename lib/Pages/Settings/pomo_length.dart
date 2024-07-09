@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class PomoLengthSettings extends StatefulWidget {
-  const PomoLengthSettings({Key? key}) : super(key: key);
+  const PomoLengthSettings({super.key});
 
   @override
-  _PomoLengthSettingsState createState() => _PomoLengthSettingsState();
+  State<PomoLengthSettings> createState() => _PomoLengthSettingsState();
 }
 
 class _PomoLengthSettingsState extends State<PomoLengthSettings> {
@@ -23,22 +23,23 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           child: Column(
             children: [
               const Padding(
-                padding: EdgeInsets.all(2.0),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
                 child: Text(
                   "Work time length",
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              const Divider(),
+              // const Divider(),
               [
                 Slider(
                   value: settingsController.defaultMinutes.value.toDouble(),
                   min: 5,
                   max: 60,
                   divisions: 11,
-                  label: settingsController.defaultMinutes.value
-                      .round()
-                      .toString(),
+                  label: settingsController.defaultMinutes.value.round().toString(),
                   onChanged: (double nValue) {
                     setState(() {
                       settingsController.defaultMinutes.value = nValue.toInt();
@@ -56,32 +57,34 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           ),
         ),
 
+        const SizedBox(height: 10),
+
         // short break
         Card(
           key: const ValueKey("ShortBreakLengthCard"),
           child: Column(
             children: [
               const Padding(
-                padding: EdgeInsets.all(2.0),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
                 child: Text(
                   "Short break length",
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              const Divider(),
+              // const Divider(),
               [
                 Slider(
                   value: settingsController.shortBreakLength.value.toDouble(),
                   min: 1,
                   max: 20,
                   divisions: 21,
-                  label: settingsController.shortBreakLength.value
-                      .round()
-                      .toString(),
+                  label: settingsController.shortBreakLength.value.round().toString(),
                   onChanged: (double nValue) {
                     setState(() {
-                      settingsController.shortBreakLength.value =
-                          nValue.toInt();
+                      settingsController.shortBreakLength.value = nValue.toInt();
                     });
                   },
                 ).expanded()
@@ -96,28 +99,31 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           ),
         ),
 
+        const SizedBox(height: 10),
+
         // long break
         Card(
           key: const ValueKey("LongBreakLengthCard"),
           child: Column(
             children: [
               const Padding(
-                padding: EdgeInsets.all(2.0),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
                 child: Text(
                   "Long break length",
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              const Divider(),
+              // const Divider(),
               [
                 Slider(
                   value: settingsController.longBreakLength.value.toDouble(),
                   min: 1,
                   max: 30,
                   divisions: 31,
-                  label: settingsController.longBreakLength.value
-                      .round()
-                      .toString(),
+                  label: settingsController.longBreakLength.value.round().toString(),
                   onChanged: (double nValue) {
                     setState(() {
                       settingsController.longBreakLength.value = nValue.toInt();

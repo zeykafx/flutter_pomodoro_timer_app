@@ -15,22 +15,26 @@ class SettingsPage extends StatelessWidget {
       child: Column(
         children: [
           Container(
-              constraints: const BoxConstraints(maxWidth: 700),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "Settings",
-                      style: TextStyle(fontSize: 20),
-                    ),
+            constraints: const BoxConstraints(maxWidth: 700),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Settings",
+                    style: TextStyle(fontSize: 20),
                   ),
-                  const PomoLengthSettings(key: ValueKey("LengthSettings")),
-                  if (!kIsWeb)
-                    if (Platform.isWindows) const SiteBlockerSettings(key: ValueKey("SiteBlockerSettings")),
-                ],
-              )),
+                ),
+                PomoLengthSettings(key: ValueKey("LengthSettings")),
+                if (!kIsWeb)
+                  if (Platform.isWindows)
+                    SiteBlockerSettings(
+                      key: ValueKey("SiteBlockerSettings"),
+                    ),
+              ],
+            ),
+          ),
         ],
       ),
     );

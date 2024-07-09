@@ -11,7 +11,7 @@ import 'task.dart';
 import 'task_input.dart';
 
 class TaskList extends StatefulWidget {
-  const TaskList({Key? key}) : super(key: key);
+  const TaskList({super.key});
 
   @override
   _TaskListState createState() => _TaskListState();
@@ -56,8 +56,7 @@ class _TaskListState extends State<TaskList> {
       Task task = Task(
           id: singleTask["id"],
           content: singleTask["content"],
-          taskType:
-              EnumToString.fromString(TaskType.values, singleTask["taskType"])!,
+          taskType: EnumToString.fromString(TaskType.values, singleTask["taskType"])!,
           pomosDone: singleTask["pomosDone"],
           plannedPomos: singleTask["plannedPomos"]);
       taskList.add(task);
@@ -126,10 +125,7 @@ class _TaskListState extends State<TaskList> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Do you really want to delete this task?"),
-                Text("\"${task.content}\"")
-              ],
+              children: [const Text("Do you really want to delete this task?"), Text("\"${task.content}\"")],
             ),
             actions: [
               TextButton(
@@ -158,15 +154,13 @@ class _TaskListState extends State<TaskList> {
   void editTask(Task task) {
     textEditingController.text = task.content;
 
-    void incrementNumberOfPomos(
-        int number, void Function(void Function()) setState) {
+    void incrementNumberOfPomos(int number, void Function(void Function()) setState) {
       setState(() {
         task.plannedPomos += number;
       });
     }
 
-    void decrementNumberOfPomos(
-        int number, void Function(void Function()) setState) {
+    void decrementNumberOfPomos(int number, void Function(void Function()) setState) {
       if (task.plannedPomos > 0) {
         incrementNumberOfPomos(-number, setState);
       }
@@ -177,8 +171,7 @@ class _TaskListState extends State<TaskList> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Edit task N°${task.id + 1}"),
-            content: StatefulBuilder(builder: (BuildContext context,
-                void Function(void Function()) setState) {
+            content: StatefulBuilder(builder: (BuildContext context, void Function(void Function()) setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -188,8 +181,7 @@ class _TaskListState extends State<TaskList> {
                       const Text("Change N° of sessions:"),
                       [
                         InkWell(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
                           child: const Icon(Icons.arrow_drop_down, size: 40),
                           onTap: () => decrementNumberOfPomos(1, setState),
                         ),
@@ -198,8 +190,7 @@ class _TaskListState extends State<TaskList> {
                           child: Text("${task.plannedPomos}"),
                         ),
                         InkWell(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
                           child: const Icon(Icons.arrow_drop_up, size: 40),
                           onTap: () => incrementNumberOfPomos(1, setState),
                         ),
@@ -211,8 +202,7 @@ class _TaskListState extends State<TaskList> {
 
                   // text field for new content
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
                     child: TextField(
                       controller: textEditingController,
                       decoration: const InputDecoration(
@@ -264,9 +254,7 @@ class _TaskListState extends State<TaskList> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Material(
-              elevation: 10,
-              shadowColor: Colors.transparent,
-              child: TaskInput(taskListFunction: taskListCallback)),
+              elevation: 10, shadowColor: Colors.transparent, child: TaskInput(taskListFunction: taskListCallback)),
 
           // list view
           Expanded(
@@ -293,23 +281,19 @@ class _TaskListState extends State<TaskList> {
                           title: Text(
                             task.content,
                             style: TextStyle(
-                                decoration: task.taskType == TaskType.done
-                                    ? TextDecoration.lineThrough
-                                    : TextDecoration.none,
+                                decoration:
+                                    task.taskType == TaskType.done ? TextDecoration.lineThrough : TextDecoration.none,
                                 decorationThickness: 3,
-                                decorationColor:
-                                    Theme.of(context).colorScheme.primary),
+                                decorationColor: Theme.of(context).colorScheme.primary),
                           ),
-                          leading:
-                              Row(mainAxisSize: MainAxisSize.min, children: [
+                          leading: Row(mainAxisSize: MainAxisSize.min, children: [
                             IconButton(
                               onPressed: () {
                                 if (task.taskType == TaskType.notStarted) {
                                   setState(() {
                                     task.changeType(TaskType.inProgress);
                                   });
-                                } else if (task.taskType ==
-                                    TaskType.inProgress) {
+                                } else if (task.taskType == TaskType.inProgress) {
                                   setState(() {
                                     task.changeType(TaskType.done);
                                   });
@@ -329,19 +313,14 @@ class _TaskListState extends State<TaskList> {
                                           : Icons.restart_alt,
                                   size: 18),
                             ),
-                            if (task.plannedPomos > 0)
-                              Text("${task.pomosDone}/${task.plannedPomos}"),
+                            if (task.plannedPomos > 0) Text("${task.pomosDone}/${task.plannedPomos}"),
                           ]),
                           trailing: PopupMenuButton(
                             elevation: 20,
                             icon: const Icon(Icons.more_vert),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                side: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                    width: 0.3)),
+                                side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
                             onSelected: (index) {
                               if (index == 0) {
                                 editTask(task);
@@ -359,9 +338,7 @@ class _TaskListState extends State<TaskList> {
                                           padding: EdgeInsets.only(left: 10),
                                           child: Icon(Icons.edit),
                                         ),
-                                        Padding(
-                                            padding: EdgeInsets.only(left: 20),
-                                            child: Text("Edit"))
+                                        Padding(padding: EdgeInsets.only(left: 20), child: Text("Edit"))
                                       ],
                                     )),
                                 const PopupMenuItem(
@@ -372,9 +349,7 @@ class _TaskListState extends State<TaskList> {
                                           padding: EdgeInsets.only(left: 10),
                                           child: Icon(Icons.delete),
                                         ),
-                                        Padding(
-                                            padding: EdgeInsets.only(left: 20),
-                                            child: Text("Delete"))
+                                        Padding(padding: EdgeInsets.only(left: 20), child: Text("Delete"))
                                       ],
                                     )),
                               ];
