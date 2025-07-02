@@ -6,7 +6,7 @@ import 'package:flutter_pomodoro_timer_app/Pages/Settings/pomo_length.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/site_blocker_settings.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +20,13 @@ class SettingsPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(18.0),
                   child: Text(
                     "Settings",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 PomoLengthSettings(key: ValueKey("LengthSettings")),

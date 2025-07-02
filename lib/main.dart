@@ -1,28 +1,32 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+// import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Pages/Pomo/pomo_page.dart';
 import 'Pages/Settings/settings_page.dart';
 
-main() async {
+void main() async {
   Animate.restartOnHotReload = true;
 
-  await GetStorage.init();
+  // await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
 
   // prevent landscape mode
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   await Future.delayed(
     const Duration(milliseconds: 300),
   ); // HACK: fix for https://github.com/flutter/flutter/issues/101007
-  if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS].contains(defaultTargetPlatform)) {
+  if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]
+      .contains(defaultTargetPlatform)) {
     doWhenWindowReady(() {
       // appWindow.alignment = Alignment.center;
       appWindow.show();
@@ -63,54 +67,72 @@ const List<String> colorText = <String>[
   "Red",
 ];
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  GetStorage box = GetStorage();
   bool darkModeEnabled = false;
 
   @override
   void initState() {
-    darkModeEnabled = box.read("DarkMode") ?? true;
-    if (!darkModeEnabled) {
-      Get.changeThemeMode(ThemeMode.dark);
-    }
-    colorSelected = box.read("colorSelected") ?? 0;
-    hasChangedColor = box.read("hasChangedColor") ?? false;
-    hasChangedDarkTheme = box.read("hasChangedDarkTheme") ?? false;
-
+    initPrefsState();
     initNotifs();
 
     super.initState();
   }
 
-  Future<void> initNotifs() async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
+  Future<void> initPrefsState() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    const InitializationSettings initializationSettings = InitializationSettings(
+    darkModeEnabled = prefs.getBool("DarkMode") ?? true;
+    if (!darkModeEnabled) {
+      Get.changeThemeMode(ThemeMode.dark);
+    }
+    colorSelected = prefs.getInt("colorSelected") ?? 0;
+    hasChangedColor = prefs.getBool("hasChangedColor") ?? false;
+    hasChangedDarkTheme = prefs.getBool("hasChangedDarkTheme") ?? false;
+  }
+
+  Future<void> initNotifs() async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings("icon");
+    const DarwinInitializationSettings initializationSettingsMacOS =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
+      macOS: initializationSettingsMacOS,
     );
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
 
     flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 
-  void changeDarModeEnabled(bool newVal) {
+  Future<void> changeDarModeEnabled(bool newVal) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       darkModeEnabled = newVal;
-      box.write("DarkMode", newVal);
+      prefs.setBool("DarkMode", newVal);
     });
   }
 
@@ -118,12 +140,14 @@ class _MyAppState extends State<MyApp> {
   bool hasChangedColor = false;
   bool hasChangedDarkTheme = false;
 
-  void changeColorSelected(int colorIndex) {
+  Future<void> changeColorSelected(int colorIndex) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       colorSelected = colorIndex;
-      box.write("colorSelected", colorSelected);
-      box.write("hasChangedColor", hasChangedColor);
-      box.write("hasChangedDarkTheme", hasChangedDarkTheme);
+      prefs.setInt("colorSelected", colorSelected);
+      prefs.setBool("hasChangedColor", hasChangedColor);
+      prefs.setBool("hasChangedDarkTheme", hasChangedDarkTheme);
     });
   }
 
@@ -154,53 +178,56 @@ class _MyAppState extends State<MyApp> {
           // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
         ),
         themeMode: ThemeMode.system,
-        home: SafeArea(
-          child: Column(
-            children: [
-              if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS].contains(defaultTargetPlatform))
-                WindowTitleBarBox(
-                  // the builder is needed for the context to find to the correct theme data
-                  child: Builder(builder: (context) {
-                    return Container(
-                      color: Theme.of(context).canvasColor,
-                      child: Row(children: [
-                        Expanded(
-                            child: MoveWindow(
-                                child: Center(
-                                    child: Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: DefaultTextStyle(
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: darkModeEnabled ? Colors.black : Colors.white,
-                                fontWeight: FontWeight.normal,
-                              ),
-                              child: const Text(
-                                'Pomo Focus',
-                              ),
+        home: Column(
+          children: [
+            if ([
+              TargetPlatform.windows,
+              TargetPlatform.linux,
+              TargetPlatform.macOS
+            ].contains(defaultTargetPlatform))
+              WindowTitleBarBox(
+                // the builder is needed for the context to find to the correct theme data
+                child: Builder(builder: (context) {
+                  return Container(
+                    color: Theme.of(context).canvasColor,
+                    child: Row(children: [
+                      Expanded(
+                          child: MoveWindow(
+                              child: Center(
+                                  child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: DefaultTextStyle(
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  darkModeEnabled ? Colors.black : Colors.white,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            child: const Text(
+                              'Pomo Focus',
                             ),
                           ),
-                        )))),
-                        WindowButtons(
-                          isDarkMode: darkModeEnabled,
                         ),
-                      ]),
-                    );
-                  }),
-                ),
-              Expanded(
-                child: Main(
-                  title: 'Pomo Focus',
-                  darkModeEnabled: darkModeEnabled,
-                  changeDarModeEnabled: changeDarModeEnabled,
-                  changeColorSelected: changeColorSelected,
-                  colorSelected: colorSelected,
-                ),
-              )
-            ],
-          ),
+                      )))),
+                      WindowButtons(
+                        isDarkMode: darkModeEnabled,
+                      ),
+                    ]),
+                  );
+                }),
+              ),
+            Expanded(
+              child: Main(
+                title: 'Pomo Focus',
+                darkModeEnabled: darkModeEnabled,
+                changeDarModeEnabled: changeDarModeEnabled,
+                changeColorSelected: changeColorSelected,
+                colorSelected: colorSelected,
+              ),
+            )
+          ],
         ));
   }
 }
@@ -208,7 +235,7 @@ class _MyAppState extends State<MyApp> {
 class WindowButtons extends StatelessWidget {
   final bool isDarkMode;
 
-  const WindowButtons({Key? key, required this.isDarkMode}) : super(key: key);
+  const WindowButtons({super.key, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -219,8 +246,12 @@ class WindowButtons extends StatelessWidget {
             iconNormal: isDarkMode ? Colors.black : Colors.white,
             iconMouseDown: isDarkMode ? Colors.black : Colors.white,
             iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.white.withOpacity(0.1),
-            mouseDown: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
+            mouseOver: isDarkMode
+                ? Colors.black.withValues(alpha: 0.1)
+                : Colors.white.withValues(alpha: 0.1),
+            mouseDown: isDarkMode
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.white.withValues(alpha: 0.2),
           ),
         ),
         MaximizeWindowButton(
@@ -228,8 +259,12 @@ class WindowButtons extends StatelessWidget {
             iconNormal: isDarkMode ? Colors.black : Colors.white,
             iconMouseDown: isDarkMode ? Colors.black : Colors.white,
             iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode ? Colors.black.withOpacity(0.1) : Colors.white.withOpacity(0.1),
-            mouseDown: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.2),
+            mouseOver: isDarkMode
+                ? Colors.black.withValues(alpha: 0.1)
+                : Colors.white.withValues(alpha: 0.1),
+            mouseDown: isDarkMode
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.white.withValues(alpha: 0.2),
           ),
         ),
         CloseWindowButton(
@@ -246,13 +281,12 @@ class WindowButtons extends StatelessWidget {
 
 class Main extends StatefulWidget {
   const Main(
-      {Key? key,
+      {super.key,
       required this.title,
       required this.darkModeEnabled,
       required this.changeDarModeEnabled,
       required this.changeColorSelected,
-      required this.colorSelected})
-      : super(key: key);
+      required this.colorSelected});
 
   final String title;
   final bool darkModeEnabled;
@@ -269,6 +303,8 @@ class _MainState extends State<Main> {
   bool pageChanged = false;
 
   late PageController pageController = PageController();
+
+  bool battDialogOpen = false;
 
   @override
   void initState() {
@@ -288,7 +324,8 @@ class _MainState extends State<Main> {
     setState(() {
       _selectedIndex = index;
       pageChanged = true;
-      pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+      pageController.animateToPage(index,
+          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     });
   }
 
@@ -303,8 +340,55 @@ class _MainState extends State<Main> {
   //   }
   // }
 
+  Future<void> checkBattOpti() async {
+    bool? isBatteryOptimizationDisabled =
+        await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
+
+    if (!isBatteryOptimizationDisabled && !battDialogOpen) {
+      setState(() {
+        battDialogOpen = true;
+      });
+      showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Text('Disable Battery Optimization?'),
+            content: Text(
+                'Battery Optimization must be disabled for the app to be able to run in the background, press OK to go to the related settings'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Not Now'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                  setState(() {
+                    battDialogOpen = false;
+                  });
+                },
+              ),
+              TextButton(
+                child: Text('OK'),
+                onPressed: () async {
+                  Navigator.of(dialogContext).pop();
+
+                  await DisableBatteryOptimization
+                      .showDisableBatteryOptimizationSettings();
+
+                  setState(() {
+                    battDialogOpen = false;
+                  });
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkBattOpti();
+
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -329,19 +413,23 @@ class _MainState extends State<Main> {
             child: IconButton(
                 onPressed: () {
                   setState(() {
-                    Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+                    Get.changeThemeMode(
+                        Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
                     widget.changeDarModeEnabled(Get.isDarkMode);
                   });
                 },
-                icon:
-                    widget.darkModeEnabled ? const Icon(Icons.dark_mode, size: 18) : const Icon(Icons.sunny, size: 18)),
+                icon: widget.darkModeEnabled
+                    ? const Icon(Icons.dark_mode, size: 18)
+                    : const Icon(Icons.sunny, size: 18)),
           ),
           PopupMenuButton(
             tooltip: "Show color menu",
             icon: const Icon(Icons.color_lens),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
-                side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3)),
+                side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    width: 0.3)),
             itemBuilder: (context) {
               return List.generate(colorOptions.length, (index) {
                 return PopupMenuItem(
@@ -351,11 +439,15 @@ class _MainState extends State<Main> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Icon(
-                            index == widget.colorSelected ? Icons.color_lens : Icons.color_lens_outlined,
+                            index == widget.colorSelected
+                                ? Icons.color_lens
+                                : Icons.color_lens_outlined,
                             color: colorOptions[index],
                           ),
                         ),
-                        Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index]))
+                        Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: Text(colorText[index]))
                       ],
                     ));
               });

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/pomo_widget.dart';
-import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Tasks/task_list.dart';
+
+import 'Tasks/task_list.dart';
 
 class PomoPage extends StatelessWidget {
-  const PomoPage({Key? key, required this.pageChanged}) : super(key: key);
+  const PomoPage({super.key, required this.pageChanged});
 
   final bool pageChanged;
 
@@ -23,13 +24,10 @@ class PomoPage extends StatelessWidget {
         ),
         // const Divider(),
         Expanded(
-            child: Padding(
-          padding: const EdgeInsets.all(0),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: TaskList(),
-          ),
+            child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          constraints: const BoxConstraints(maxWidth: 700),
+          child: TaskList(),
         )),
       ],
     );

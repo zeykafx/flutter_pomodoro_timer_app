@@ -32,13 +32,13 @@ class Task {
     return content;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, String> toJson() {
     return {
-      "id": id,
+      "id": id.toString(),
       "content": content,
       "taskType": EnumToString.convertToString(taskType),
-      "plannedPomos": plannedPomos,
-      "pomosDone": pomosDone
+      "plannedPomos": plannedPomos.toString(),
+      "pomosDone": pomosDone.toString()
     };
   }
 }

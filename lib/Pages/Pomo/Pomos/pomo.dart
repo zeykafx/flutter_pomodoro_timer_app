@@ -21,11 +21,11 @@ enum PomoSessionPhase {
 String phaseToString(PomoSessionPhase phase) {
   switch (phase) {
     case PomoSessionPhase.stopped:
-      return "Timer stopped";
+      return "Paused";
     case PomoSessionPhase.working:
-      return "Work time";
+      return "Focus";
     case PomoSessionPhase.shortBreak:
-      return "Short Break";
+      return "Break";
     case PomoSessionPhase.longBreak:
       return "Long Break";
   }
@@ -203,7 +203,7 @@ class PomoSession {
   String updateFormattedTimeLeftString(Timer timer) {
     Duration timeLeft = getTimeLeft();
 
-    if (timeLeft.inSeconds.abs() >= 0) {
+    if (timeLeft.inSeconds > 0) {
       int totalTime = Duration(
               seconds: currentPhase == PomoSessionPhase.working
                   ? settingsController.defaultMinutes.value * 60
@@ -214,8 +214,8 @@ class PomoSession {
 
       // the session progress is a scalar that goes from 0 to 100 based on the
       // current session progress, i.e. halfway through it is 50.0,...
-      sessionProgress =
-          ((totalTime - timeLeft.inSeconds.abs()) / totalTime) * 100;
+
+      sessionProgress = (totalTime - timeLeft.inSeconds) / totalTime;
 
       timeLeftString = timeLeft.toString().substring(0, 7);
     } else {

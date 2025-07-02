@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ResetButton extends StatelessWidget {
   const ResetButton(
-      {Key? key,
+      {super.key,
       required this.resetTimer,
       required this.defaultMinutes,
-      required this.updateFormattedTimeLeftString})
-      : super(key: key);
+      required this.updateFormattedTimeLeftString});
 
   final Function resetTimer;
   final int defaultMinutes;
@@ -16,10 +16,11 @@ class ResetButton extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme colors = Theme.of(context).colorScheme;
 
-    return IconButton(
+    return IconButton.filledTonal(
       tooltip: "Reset Timer",
-      icon: const Icon(Icons.restart_alt, size: 20),
+      icon: const Icon(Icons.restart_alt_rounded, size: 30),
       onPressed: () {
+        HapticFeedback.mediumImpact();
         resetTimer(defaultMinutes);
         updateFormattedTimeLeftString();
       },

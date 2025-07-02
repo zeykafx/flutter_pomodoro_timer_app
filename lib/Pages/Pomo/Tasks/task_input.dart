@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Tasks/task.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 class TaskInput extends StatefulWidget {
-  const TaskInput({Key? key, required this.taskListFunction}) : super(key: key);
+  const TaskInput({super.key, required this.taskListFunction});
   final Function(Task) taskListFunction;
 
   @override
@@ -32,7 +34,7 @@ class _TaskInputState extends State<TaskInput> {
   ];
   Random random = Random();
   late int hintIdx;
-  GetStorage box = GetStorage();
+  // GetStorage box = GetStorage();
   int numberOfPomos = 0;
 
   int columnWidth = 500;
@@ -43,11 +45,17 @@ class _TaskInputState extends State<TaskInput> {
     super.initState();
   }
 
-  Task createTask(String textFieldValue) {
-    List<dynamic> tasksJson = box.read("Tasks") ?? [];
+  Future<Task> createTask(String textFieldValue) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> tasksString = prefs.getStringList("Tasks") ?? [];
+    int lastId = 0;
+    if (tasksString.isNotEmpty) {
+      var lastTaskJson = jsonDecode(tasksString.last);
+      lastId = int.tryParse(lastTaskJson["id"]) ?? 0 + 1;
+    }
 
     Task newTask = Task(
-      id: tasksJson.isNotEmpty ? tasksJson.last["id"] + 1 : 0,
+      id: lastId,
       content: textFieldValue,
       taskType: TaskType.notStarted,
       plannedPomos: numberOfPomos,
@@ -55,8 +63,8 @@ class _TaskInputState extends State<TaskInput> {
     );
 
     // add the new task to the list in the 'json' format and write that to the box
-    tasksJson.add(newTask.toJson());
-    box.write("Tasks", tasksJson);
+    tasksString.add(jsonEncode(newTask.toJson()));
+    prefs.setStringList("Tasks", tasksString);
 
     setState(() {
       numberOfPomos = 0;
@@ -87,7 +95,7 @@ class _TaskInputState extends State<TaskInput> {
 
   @override
   Widget build(BuildContext context) {
-    Size mediaQuerySize = MediaQuery.of(context).size;
+    // Size mediaQuerySize = MediaQuery.of(context).size;
     ColorScheme colors = Theme.of(context).colorScheme;
 
     return Flex(
@@ -105,9 +113,9 @@ class _TaskInputState extends State<TaskInput> {
                   hintIdx = random.nextInt(hintTexts.length);
                 });
               },
-              onSubmitted: (String value) {
+              onSubmitted: (String value) async {
                 if (value.isNotEmpty) {
-                  Task task = createTask(value);
+                  Task task = await createTask(value);
                   widget.taskListFunction(task);
                   textEditingController.clear();
                   FocusScope.of(context).unfocus();
@@ -161,14 +169,18 @@ class _TaskInputState extends State<TaskInput> {
                 style: IconButton.styleFrom(
                   foregroundColor: colors.onSecondaryContainer,
                   backgroundColor: colors.secondaryContainer,
-                  disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-                  hoverColor: colors.onSecondaryContainer.withOpacity(0.08),
-                  focusColor: colors.onSecondaryContainer.withOpacity(0.12),
-                  highlightColor: colors.onSecondaryContainer.withOpacity(0.12),
+                  disabledBackgroundColor:
+                      colors.onSurface.withValues(alpha: (0.12)),
+                  hoverColor:
+                      colors.onSecondaryContainer.withValues(alpha: (0.08)),
+                  focusColor:
+                      colors.onSecondaryContainer.withValues(alpha: (0.12)),
+                  highlightColor:
+                      colors.onSecondaryContainer.withValues(alpha: (0.12)),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (textEditingController.text.isNotEmpty) {
-                    Task task = createTask(textEditingController.text);
+                    Task task = await createTask(textEditingController.text);
                     widget.taskListFunction(task);
                     textEditingController.clear();
                     FocusScope.of(context).unfocus();

@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/audioplayers_android-5.2.1/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dynamic_color-1.7.0/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_local_notifications-19.3.0/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.17/android" />
+    <file type="web" url="file://$PROJECT_DIR$/android" />
+    <file type="web" url="file://$USER_HOME$/flutter/packages/flutter_tools/gradle" />
     <type id="android" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Erlang 25" project-jdk-type="Erlang SDK" />
 </project>
