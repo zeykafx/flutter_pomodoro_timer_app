@@ -140,7 +140,7 @@ class _TaskListState extends State<TaskList> {
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: SizedBox(
-            height: 160,
+            height: 190,
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Center(

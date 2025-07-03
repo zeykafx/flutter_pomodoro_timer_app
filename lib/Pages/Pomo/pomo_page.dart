@@ -10,26 +10,29 @@ class PomoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Material(
-          // the Material widget is just here to provide a background to the Pomo widget, since there is a bug with colored list tiles that make the color appear over all widgets that sit above the list view.
-          elevation: 10,
-          shadowColor: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-            child: Pomo(pageChanged: pageChanged),
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 700),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Material(
+            // the Material widget is just here to provide a background to the Pomo widget, since there is a bug with colored list tiles that make the color appear over all widgets that sit above the list view.
+            elevation: 10,
+            shadowColor: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+              child: Pomo(pageChanged: pageChanged),
+            ),
           ),
-        ),
-        // const Divider(),
-        Expanded(
-            child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          constraints: const BoxConstraints(maxWidth: 700),
-          child: TaskList(),
-        )),
-      ],
+          // const Divider(),
+          Expanded(
+              child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            constraints: const BoxConstraints(maxWidth: 700),
+            child: TaskList(),
+          )),
+        ],
+      ),
     );
   }
 }

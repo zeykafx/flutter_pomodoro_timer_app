@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:flutter/foundation.dart';
@@ -165,6 +167,7 @@ class _MyAppState extends State<MyApp> {
 
     return GetMaterialApp(
         title: 'Pomo Focus',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           colorSchemeSeed: colorOptions[colorSelected],
@@ -341,47 +344,50 @@ class _MainState extends State<Main> {
   // }
 
   Future<void> checkBattOpti() async {
-    bool? isBatteryOptimizationDisabled =
-        await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
+    if (Platform.isAndroid) {
+      bool? isBatteryOptimizationDisabled =
+          await DisableBatteryOptimization.isBatteryOptimizationDisabled ??
+              false;
 
-    if (!isBatteryOptimizationDisabled && !battDialogOpen) {
-      setState(() {
-        battDialogOpen = true;
-      });
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: Text('Disable Battery Optimization?'),
-            content: Text(
-                'Battery Optimization must be disabled for the app to be able to run in the background, press OK to go to the related settings'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Not Now'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
-                  setState(() {
-                    battDialogOpen = false;
-                  });
-                },
-              ),
-              TextButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop();
+      if (!isBatteryOptimizationDisabled && !battDialogOpen) {
+        setState(() {
+          battDialogOpen = true;
+        });
+        showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: Text('Disable Battery Optimization?'),
+              content: Text(
+                  'Battery Optimization must be disabled for the app to be able to run in the background, press OK to go to the related settings'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Not Now'),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                    setState(() {
+                      battDialogOpen = false;
+                    });
+                  },
+                ),
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
 
-                  await DisableBatteryOptimization
-                      .showDisableBatteryOptimizationSettings();
+                    await DisableBatteryOptimization
+                        .showDisableBatteryOptimizationSettings();
 
-                  setState(() {
-                    battDialogOpen = false;
-                  });
-                },
-              ),
-            ],
-          );
-        },
-      );
+                    setState(() {
+                      battDialogOpen = false;
+                    });
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 

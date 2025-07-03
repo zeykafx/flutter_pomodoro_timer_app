@@ -334,52 +334,59 @@ class _PomoState extends State<Pomo> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ResetButton(
-                  defaultMinutes: pomoSession.currentPhase ==
-                          PomoSessionPhase.working
-                      ? settingsController.defaultMinutes.value
-                      : pomoSession.currentPhase == PomoSessionPhase.shortBreak
-                          ? settingsController.shortBreakLength.value
-                          : settingsController.longBreakLength.value,
-                  updateFormattedTimeLeftString: updateFormattedTimeLeftString,
-                  resetTimer: resetTimer,
-                ),
-                StartStopButton(
-                  timer: timer,
-                  startTimer: startTimer,
-                  updateFormattedTimeLeftString: updateFormattedTimeLeftString,
-                  defaultMinutes: pomoSession.currentPhase ==
-                          PomoSessionPhase.working
-                      ? settingsController.defaultMinutes.value
-                      : pomoSession.currentPhase == PomoSessionPhase.shortBreak
-                          ? settingsController.shortBreakLength.value
-                          : settingsController.longBreakLength.value,
-                  resetTimer: resetTimer,
-                  getTimeLeft: pomoSession.getTimeLeft,
-                ),
-                IconButton.filledTonal(
-                  tooltip: "Skip to next phase",
-                  icon: const Icon(Icons.skip_next_rounded, size: 30),
-                  onPressed: () {
-                    HapticFeedback.mediumImpact();
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ResetButton(
+                    defaultMinutes:
+                        pomoSession.currentPhase == PomoSessionPhase.working
+                            ? settingsController.defaultMinutes.value
+                            : pomoSession.currentPhase ==
+                                    PomoSessionPhase.shortBreak
+                                ? settingsController.shortBreakLength.value
+                                : settingsController.longBreakLength.value,
+                    updateFormattedTimeLeftString:
+                        updateFormattedTimeLeftString,
+                    resetTimer: resetTimer,
+                  ),
+                  StartStopButton(
+                    timer: timer,
+                    startTimer: startTimer,
+                    updateFormattedTimeLeftString:
+                        updateFormattedTimeLeftString,
+                    defaultMinutes:
+                        pomoSession.currentPhase == PomoSessionPhase.working
+                            ? settingsController.defaultMinutes.value
+                            : pomoSession.currentPhase ==
+                                    PomoSessionPhase.shortBreak
+                                ? settingsController.shortBreakLength.value
+                                : settingsController.longBreakLength.value,
+                    resetTimer: resetTimer,
+                    getTimeLeft: pomoSession.getTimeLeft,
+                  ),
+                  IconButton.filledTonal(
+                    tooltip: "Skip to next phase",
+                    icon: const Icon(Icons.skip_next_rounded, size: 30),
+                    onPressed: () {
+                      HapticFeedback.mediumImpact();
 
-                    pomoSession.endTimer();
-                    // resetTimer(defaultMinutes);
-                    updateFormattedTimeLeftString();
+                      pomoSession.endTimer();
+                      // resetTimer(defaultMinutes);
+                      updateFormattedTimeLeftString();
 
-                    if (timer.isActive &&
-                        !settingsController.autoContinue.value) {
-                      timer.cancel();
-                      if (!kIsWeb && !Platform.isWindows) {
-                        flutterLocalNotificationsPlugin.cancelAll();
+                      if (timer.isActive &&
+                          !settingsController.autoContinue.value) {
+                        timer.cancel();
+                        if (!kIsWeb && !Platform.isWindows) {
+                          flutterLocalNotificationsPlugin.cancelAll();
+                        }
                       }
-                    }
-                  },
-                ),
-              ],
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
