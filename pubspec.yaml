@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.4+6
+version: 1.0.4+7
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -48,6 +48,8 @@ dependencies:
     git:
       url: https://github.com/pvsvamsi/Disable-Battery-Optimizations
       ref: 3bd744d
+  package_info_plus: ^8.3.0
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -76,12 +78,6 @@ flutter_launcher_icons:
   adaptive_icon_foreground_inset: 24
   adaptive_icon_monochrome: "assets/icon/adaptive_icon.png"
 
-msix_config:
-  display_name: Pomo Focus
-  publisher_display_name: Corentin Detry
-  identity_name: com.zeykafx.pomofocus
-  msix_version: 1.0.0.0
-  logo_path: C:\Users\coren\Code\flutter_pomodoro_timer_app\assets\icon\icon.png
 
 # The following section is specific to Flutter packages.
 flutter:
