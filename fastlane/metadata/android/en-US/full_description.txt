@@ -1,0 +1,8 @@
+Pomo Focus is a Pomodoro timer with an integrated task list.
+
+Features: 
+
+- Configurable timers (Work, short and long break)
+- Integrated task list with number of sessions for each task
+- Notification with timer
+- Audible notification sound

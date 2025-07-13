@@ -1,0 +1,8 @@
+Pomo Focus est un minuteur Pomodoro avec une liste de tâches intégrée.
+
+Caractéristiques :
+
+- Minuteries configurables (travail, pause courte et longue)
+- Liste de tâches intégrée avec nombre de sessions pour chaque tâche
+- Notification avec le minuteur
+- Son de notification audible
