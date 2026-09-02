@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/pomo_length.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/about_section.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/site_blocker_settings.dart';

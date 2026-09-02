@@ -1,6 +1,6 @@
 // code from https://github.com/ReVanced/revanced-manager/blob/main/lib/ui/widgets/settingsView/settings_section.dart#L3
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SettingsSection extends StatelessWidget {
   const SettingsSection({

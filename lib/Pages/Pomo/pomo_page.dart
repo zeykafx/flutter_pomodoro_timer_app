@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/pomo_widget.dart';
 
 import 'Tasks/task_list.dart';

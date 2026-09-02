@@ -1,14 +1,10 @@
 import 'dart:io';
 
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:disable_battery_optimization/disable_battery_optimization.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
-// import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Pages/Pomo/pomo_page.dart';
@@ -17,23 +13,11 @@ import 'Pages/Settings/settings_page.dart';
 void main() async {
   Animate.restartOnHotReload = true;
 
-  // await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
 
   // prevent landscape mode
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  await Future.delayed(
-    const Duration(milliseconds: 300),
-  ); // HACK: fix for https://github.com/flutter/flutter/issues/101007
-  if ([TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]
-      .contains(defaultTargetPlatform)) {
-    doWhenWindowReady(() {
-      // appWindow.alignment = Alignment.center;
-      appWindow.show();
-    });
-  }
   runApp(const MyApp());
 }
 
@@ -69,8 +53,7 @@ const List<String> colorText = <String>[
   "Red",
 ];
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -81,6 +64,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool darkModeEnabled = false;
+  ThemeMode _themeMode = ThemeMode.system;
 
   @override
   void initState() {
@@ -94,47 +78,38 @@ class _MyAppState extends State<MyApp> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     darkModeEnabled = prefs.getBool("DarkMode") ?? true;
-    if (!darkModeEnabled) {
-      Get.changeThemeMode(ThemeMode.dark);
-    }
+    _themeMode = darkModeEnabled ? ThemeMode.dark : ThemeMode.light;
     colorSelected = prefs.getInt("colorSelected") ?? 0;
     hasChangedColor = prefs.getBool("hasChangedColor") ?? false;
     hasChangedDarkTheme = prefs.getBool("hasChangedDarkTheme") ?? false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> initNotifs() async {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings("icon");
-    const DarwinInitializationSettings initializationSettingsMacOS =
-        DarwinInitializationSettings(
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings("icon");
+    const DarwinInitializationSettings initializationSettingsMacOS = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      macOS: initializationSettingsMacOS,
-    );
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
+    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, macOS: initializationSettingsMacOS);
+    await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
 
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
+    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
   }
 
-  Future<void> changeDarModeEnabled(bool newVal) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
+  void toggleThemeMode() {
+    final bool makeDark = _themeMode != ThemeMode.dark;
     setState(() {
-      darkModeEnabled = newVal;
-      prefs.setBool("DarkMode", newVal);
+      _themeMode = makeDark ? ThemeMode.dark : ThemeMode.light;
+      darkModeEnabled = makeDark;
+    });
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setBool("DarkMode", makeDark);
     });
   }
 
@@ -161,139 +136,56 @@ class _MyAppState extends State<MyApp> {
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
         DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight
+        DeviceOrientation.landscapeRight,
       ]);
     }
 
-    return GetMaterialApp(
-        title: 'Pomo Focus',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorSchemeSeed: colorOptions[colorSelected],
-          brightness: Brightness.light,
-          // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme),
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          colorSchemeSeed: colorOptions[colorSelected],
-          brightness: Brightness.dark,
-          // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
-        ),
-        themeMode: ThemeMode.system,
-        home: Column(
-          children: [
-            if ([
-              TargetPlatform.windows,
-              TargetPlatform.linux,
-              TargetPlatform.macOS
-            ].contains(defaultTargetPlatform))
-              WindowTitleBarBox(
-                // the builder is needed for the context to find to the correct theme data
-                child: Builder(builder: (context) {
-                  return Container(
-                    color: Theme.of(context).canvasColor,
-                    child: Row(children: [
-                      Expanded(
-                          child: MoveWindow(
-                              child: Center(
-                                  child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: DefaultTextStyle(
-                            style: TextStyle(
-                              fontSize: 12,
-                              color:
-                                  darkModeEnabled ? Colors.black : Colors.white,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            child: const Text(
-                              'Pomo Focus',
-                            ),
-                          ),
-                        ),
-                      )))),
-                      WindowButtons(
-                        isDarkMode: darkModeEnabled,
-                      ),
-                    ]),
-                  );
-                }),
-              ),
-            Expanded(
-              child: Main(
-                title: 'Pomo Focus',
-                darkModeEnabled: darkModeEnabled,
-                changeDarModeEnabled: changeDarModeEnabled,
-                changeColorSelected: changeColorSelected,
-                colorSelected: colorSelected,
-              ),
-            )
-          ],
-        ));
-  }
-}
-
-class WindowButtons extends StatelessWidget {
-  final bool isDarkMode;
-
-  const WindowButtons({super.key, required this.isDarkMode});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        MinimizeWindowButton(
-          colors: WindowButtonColors(
-            iconNormal: isDarkMode ? Colors.black : Colors.white,
-            iconMouseDown: isDarkMode ? Colors.black : Colors.white,
-            iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode
-                ? Colors.black.withValues(alpha: 0.1)
-                : Colors.white.withValues(alpha: 0.1),
-            mouseDown: isDarkMode
-                ? Colors.black.withValues(alpha: 0.2)
-                : Colors.white.withValues(alpha: 0.2),
+    return MaterialApp(
+      title: 'Pomo Focus',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: colorOptions[colorSelected],
+        brightness: Brightness.light,
+        // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: colorOptions[colorSelected],
+        brightness: Brightness.dark,
+        // textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+      ),
+      themeMode: _themeMode,
+      home: Column(
+        children: [
+          Expanded(
+            child: Main(
+              title: 'Pomo Focus',
+              darkModeEnabled: darkModeEnabled,
+              toggleThemeMode: toggleThemeMode,
+              changeColorSelected: changeColorSelected,
+              colorSelected: colorSelected,
+            ),
           ),
-        ),
-        MaximizeWindowButton(
-          colors: WindowButtonColors(
-            iconNormal: isDarkMode ? Colors.black : Colors.white,
-            iconMouseDown: isDarkMode ? Colors.black : Colors.white,
-            iconMouseOver: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: isDarkMode
-                ? Colors.black.withValues(alpha: 0.1)
-                : Colors.white.withValues(alpha: 0.1),
-            mouseDown: isDarkMode
-                ? Colors.black.withValues(alpha: 0.2)
-                : Colors.white.withValues(alpha: 0.2),
-          ),
-        ),
-        CloseWindowButton(
-          colors: WindowButtonColors(
-            iconNormal: isDarkMode ? Colors.black : Colors.white,
-            mouseOver: Colors.redAccent,
-            mouseDown: Colors.red,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 class Main extends StatefulWidget {
-  const Main(
-      {super.key,
-      required this.title,
-      required this.darkModeEnabled,
-      required this.changeDarModeEnabled,
-      required this.changeColorSelected,
-      required this.colorSelected});
+  const Main({
+    super.key,
+    required this.title,
+    required this.darkModeEnabled,
+    required this.toggleThemeMode,
+    required this.changeColorSelected,
+    required this.colorSelected,
+  });
 
   final String title;
   final bool darkModeEnabled;
-  final Function changeDarModeEnabled;
+  final void Function() toggleThemeMode;
   final Function(int) changeColorSelected;
   final int colorSelected;
 
@@ -327,8 +219,7 @@ class _MainState extends State<Main> {
     setState(() {
       _selectedIndex = index;
       pageChanged = true;
-      pageController.animateToPage(index,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+      pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     });
   }
 
@@ -345,9 +236,7 @@ class _MainState extends State<Main> {
 
   Future<void> checkBattOpti() async {
     if (Platform.isAndroid) {
-      bool? isBatteryOptimizationDisabled =
-          await DisableBatteryOptimization.isBatteryOptimizationDisabled ??
-              false;
+      bool? isBatteryOptimizationDisabled = await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
 
       if (!isBatteryOptimizationDisabled && !battDialogOpen) {
         setState(() {
@@ -358,8 +247,7 @@ class _MainState extends State<Main> {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: Text('Disable Battery Optimization?'),
-              content: Text(
-                  'Battery Optimization must be disabled for the app to be able to run in the background, press OK to go to the related settings'),
+              content: Text('Battery Optimization must be disabled for the app to be able to run in the background, press OK to go to the related settings'),
               actions: <Widget>[
                 TextButton(
                   child: Text('Not Now'),
@@ -375,8 +263,7 @@ class _MainState extends State<Main> {
                   onPressed: () async {
                     Navigator.of(context).pop();
 
-                    await DisableBatteryOptimization
-                        .showDisableBatteryOptimizationSettings();
+                    await DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
 
                     setState(() {
                       battDialogOpen = false;
@@ -400,14 +287,8 @@ class _MainState extends State<Main> {
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.timer),
-            label: 'Pomodoro',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
+          NavigationDestination(icon: Icon(Icons.timer), label: 'Pomodoro'),
+          NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
       appBar: AppBar(
@@ -417,62 +298,54 @@ class _MainState extends State<Main> {
             message: "Toggle dark theme",
             waitDuration: const Duration(milliseconds: 500),
             child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    Get.changeThemeMode(
-                        Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
-                    widget.changeDarModeEnabled(Get.isDarkMode);
-                  });
-                },
-                icon: widget.darkModeEnabled
-                    ? const Icon(Icons.dark_mode, size: 18)
-                    : const Icon(Icons.sunny, size: 18)),
+              onPressed: () {
+                widget.toggleThemeMode();
+              },
+              icon: widget.darkModeEnabled ? const Icon(Icons.dark_mode, size: 18) : const Icon(Icons.sunny, size: 18),
+            ),
           ),
           PopupMenuButton(
             tooltip: "Show color menu",
             icon: const Icon(Icons.color_lens),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    width: 0.3)),
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.3),
+            ),
             itemBuilder: (context) {
               return List.generate(colorOptions.length, (index) {
                 return PopupMenuItem(
-                    value: index,
-                    child: Wrap(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Icon(
-                            index == widget.colorSelected
-                                ? Icons.color_lens
-                                : Icons.color_lens_outlined,
-                            color: colorOptions[index],
-                          ),
-                        ),
-                        Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(colorText[index]))
-                      ],
-                    ));
+                  value: index,
+                  child: Wrap(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Icon(index == widget.colorSelected ? Icons.color_lens : Icons.color_lens_outlined, color: colorOptions[index]),
+                      ),
+                      Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index])),
+                    ],
+                  ),
+                );
               });
             },
             onSelected: widget.changeColorSelected,
-          )
+          ),
         ],
       ),
       body: SizedBox.expand(
-          child: PageView(
-        controller: pageController,
-        allowImplicitScrolling: true,
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        children: [PomoPage(pageChanged: pageChanged), const SettingsPage()],
-      )),
+        child: PageView(
+          controller: pageController,
+          allowImplicitScrolling: true,
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          children: [
+            PomoPage(pageChanged: pageChanged),
+            const SettingsPage(),
+          ],
+        ),
+      ),
     );
   }
 }

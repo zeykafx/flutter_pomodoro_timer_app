@@ -1,57 +1,97 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingsController extends GetxController {
-  // GetStorage box = GetStorage();
+class SettingsController extends ChangeNotifier {
+  SettingsController._();
 
-  RxBool blockSite = false.obs;
-  RxList sitesToBlock = [].obs;
+  static final SettingsController instance = SettingsController._();
 
-  RxBool enableNotifications = true.obs;
-  RxBool autoContinue = false.obs;
+  SharedPreferences? _prefs;
 
-  RxInt defaultMinutes = 25.obs;
-  RxInt shortBreakLength = 5.obs;
-  RxInt longBreakLength = 10.obs;
+  bool _blockSite = false;
+  List<String> _sitesToBlock = [];
+
+  bool _enableNotifications = true;
+  bool _autoContinue = false;
+
+  int _defaultMinutes = 25;
+  int _shortBreakLength = 5;
+  int _longBreakLength = 10;
+
+  bool get blockSite => _blockSite;
+  List<String> get sitesToBlock => _sitesToBlock;
+  bool get enableNotifications => _enableNotifications;
+  bool get autoContinue => _autoContinue;
+  int get defaultMinutes => _defaultMinutes;
+  int get shortBreakLength => _shortBreakLength;
+  int get longBreakLength => _longBreakLength;
 
   SettingsController() {
-    SharedPreferences.getInstance().then((SharedPreferences prefs) {
-      defaultMinutes.value = prefs.getInt("defaultMinutes") ?? 25;
-      shortBreakLength.value = prefs.getInt("shortBreakLength") ?? 5;
-      longBreakLength.value = prefs.getInt("longBreakLength") ?? 10;
+    _init();
+  }
 
-      defaultMinutes.listen((int val) {
-        prefs.setInt("defaultMinutes", val);
-      });
+  Future<void> _init() async {
+    _prefs = await SharedPreferences.getInstance();
 
-      shortBreakLength.listen((int val) {
-        prefs.setInt("shortBreakLength", val);
-      });
+    _defaultMinutes = _prefs!.getInt("defaultMinutes") ?? 25;
+    _shortBreakLength = _prefs!.getInt("shortBreakLength") ?? 5;
+    _longBreakLength = _prefs!.getInt("longBreakLength") ?? 10;
 
-      longBreakLength.listen((int val) {
-        prefs.setInt("longBreakLength", val);
-      });
+    _blockSite = _prefs!.getBool("BlockSite") ?? false;
+    _sitesToBlock = _prefs!.getStringList("sitesToBlock") ?? [];
 
-      blockSite.value = prefs.getBool("BlockSite") ?? false;
-      blockSite.listen((bool val) {
-        prefs.setBool("BlockSite", val);
-      });
+    _enableNotifications = _prefs!.getBool("EnableNotifications") ?? true;
+    _autoContinue = _prefs!.getBool("AutoContinue") ?? false;
 
-      List boxVal = prefs.getStringList("sitesToBlock") ?? [];
-      sitesToBlock.value = boxVal;
-      sitesToBlock.listen((var newVal) {
-        prefs.setStringList("sitesToBlock", newVal.cast());
-      });
+    notifyListeners();
+  }
 
-      enableNotifications.value = prefs.getBool("EnableNotifications") ?? true;
-      enableNotifications.listen((bool val) {
-        prefs.setBool("EnableNotifications", val);
-      });
+  set blockSite(bool value) {
+    if (_blockSite == value) return;
+    _blockSite = value;
+    _prefs?.setBool("BlockSite", value);
+    notifyListeners();
+  }
 
-      autoContinue.value = prefs.getBool("AutoContinue") ?? false;
-      autoContinue.listen((bool val) {
-        prefs.setBool("AutoContinue", val);
-      });
-    });
+  set sitesToBlock(List<String> value) {
+    if (_sitesToBlock == value) return;
+    _sitesToBlock = value;
+    _prefs?.setStringList("sitesToBlock", value);
+    notifyListeners();
+  }
+
+  set enableNotifications(bool value) {
+    if (_enableNotifications == value) return;
+    _enableNotifications = value;
+    _prefs?.setBool("EnableNotifications", value);
+    notifyListeners();
+  }
+
+  set autoContinue(bool value) {
+    if (_autoContinue == value) return;
+    _autoContinue = value;
+    _prefs?.setBool("AutoContinue", value);
+    notifyListeners();
+  }
+
+  set defaultMinutes(int value) {
+    if (_defaultMinutes == value) return;
+    _defaultMinutes = value;
+    _prefs?.setInt("defaultMinutes", value);
+    notifyListeners();
+  }
+
+  set shortBreakLength(int value) {
+    if (_shortBreakLength == value) return;
+    _shortBreakLength = value;
+    _prefs?.setInt("shortBreakLength", value);
+    notifyListeners();
+  }
+
+  set longBreakLength(int value) {
+    if (_longBreakLength == value) return;
+    _longBreakLength = value;
+    _prefs?.setInt("longBreakLength", value);
+    notifyListeners();
   }
 }

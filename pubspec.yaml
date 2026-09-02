@@ -15,10 +15,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.4+8
+version: 1.0.5+9
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: ^3.13.2
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,27 +30,23 @@ dependencies:
   flutter:
     sdk: flutter
 
-  google_fonts: ^6.2.1
+  google_fonts: ^8.2.1
   fluttericon: ^2.0.0
-  get: ^4.7.2
   styled_widget: ^0.4.1
-  get_storage: ^2.1.1
   audioplayers: ^6.5.0
   enum_to_string: ^2.2.1
-  flutter_local_notifications: ^19.3.0
-
+  flutter_local_notifications: ^22.3.0
   cupertino_icons: ^1.0.8
-  bitsdojo_window: ^0.1.6
   flutter_animate: ^4.5.2
-  dynamic_color: ^1.7.0
+  dynamic_color: ^2.1.0
   shared_preferences: ^2.5.3
   disable_battery_optimization:
-    git:
-      url: https://github.com/pvsvamsi/Disable-Battery-Optimizations
-      ref: 3bd744d
-  package_info_plus: ^8.3.0
+    path: packages/disable_battery_optimization
+  package_info_plus: ^10.2.1
   url_launcher: ^6.3.2
 
+  material_ui: any
+  cupertino_ui: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

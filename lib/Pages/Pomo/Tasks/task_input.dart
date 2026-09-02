@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Tasks/task.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -34,7 +33,6 @@ class _TaskInputState extends State<TaskInput> {
   ];
   Random random = Random();
   late int hintIdx;
-  // GetStorage box = GetStorage();
   int numberOfPomos = 0;
 
   int columnWidth = 500;

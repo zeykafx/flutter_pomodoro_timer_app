@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 
 class SiteBlocker {
   File file = File("c:/windows/system32/drivers/etc/hosts");
@@ -16,11 +16,7 @@ class SiteBlocker {
       }
       return true;
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        e.toString(),
-      );
-      e.printError();
+      debugPrint(e.toString());
       return false;
     }
   }
@@ -33,11 +29,7 @@ class SiteBlocker {
       });
       return true;
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        e.toString(),
-      );
-      e.printError();
+      debugPrint(e.toString());
       return false;
     }
   }

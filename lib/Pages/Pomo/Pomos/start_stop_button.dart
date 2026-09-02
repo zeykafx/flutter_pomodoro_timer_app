@@ -2,25 +2,24 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/site_blocker.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
-import 'package:get/get.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class StartStopButton extends StatefulWidget {
-  const StartStopButton(
-      {super.key,
-      required this.timer,
-      required this.startTimer,
-      required this.updateFormattedTimeLeftString,
-      required this.resetTimer,
-      required this.defaultMinutes,
-      required this.getTimeLeft});
+  const StartStopButton({
+    super.key,
+    required this.timer,
+    required this.startTimer,
+    required this.updateFormattedTimeLeftString,
+    required this.resetTimer,
+    required this.defaultMinutes,
+    required this.getTimeLeft,
+  });
 
   final Timer timer;
   final Function startTimer;
@@ -35,7 +34,7 @@ class StartStopButton extends StatefulWidget {
 
 class _StartStopButtonState extends State<StartStopButton> {
   SiteBlocker siteBlocker = SiteBlocker();
-  SettingsController settingsController = Get.put(SettingsController());
+  SettingsController settingsController = SettingsController.instance;
 
   static const double iconSize = 40;
 
@@ -59,7 +58,7 @@ class _StartStopButtonState extends State<StartStopButton> {
           if (widget.timer.isActive) {
             stopTimer();
             if (!kIsWeb) {
-              if (Platform.isWindows && settingsController.blockSite.isTrue) {
+              if (Platform.isWindows && settingsController.blockSite) {
                 siteBlocker.unblockSites();
               }
             }
@@ -71,7 +70,7 @@ class _StartStopButtonState extends State<StartStopButton> {
             // else start the timer and block the sites in the list
             widget.startTimer();
             if (!kIsWeb) {
-              if (Platform.isWindows && settingsController.blockSite.isTrue) {
+              if (Platform.isWindows && settingsController.blockSite) {
                 siteBlocker.blockSites(settingsController.sitesToBlock);
               }
             }
@@ -79,9 +78,7 @@ class _StartStopButtonState extends State<StartStopButton> {
           widget.updateFormattedTimeLeftString();
         });
       },
-      icon: widget.timer.isActive
-          ? const Icon(Icons.pause_rounded, size: iconSize)
-          : const Icon(Icons.play_arrow_rounded, size: iconSize),
+      icon: widget.timer.isActive ? const Icon(Icons.pause_rounded, size: iconSize) : const Icon(Icons.play_arrow_rounded, size: iconSize),
       // label: widget.timer.isActive ? const Text("Stop") : const Text("Start")
     );
   }

@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_section.dart';
-import 'package:get/get.dart';
-import 'package:styled_widget/styled_widget.dart';
 
 class PomoLengthSettings extends StatefulWidget {
   const PomoLengthSettings({super.key});
@@ -12,12 +10,13 @@ class PomoLengthSettings extends StatefulWidget {
 }
 
 class _PomoLengthSettingsState extends State<PomoLengthSettings> {
-  SettingsController settingsController = Get.put(SettingsController());
+  SettingsController settingsController = SettingsController.instance;
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => SettingsSection(
+    return ListenableBuilder(
+      listenable: settingsController,
+      builder: (context, _) => SettingsSection(
         title: "Pomodoro settings",
         children: [
           // work time length
@@ -27,19 +26,17 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
               width: 150,
               child: Row(
                 children: [
-                  Text(
-                    "${settingsController.defaultMinutes.value} min",
-                  ),
+                  Text("${settingsController.defaultMinutes} min"),
                   Expanded(
                     child: Slider(
                       year2023: false, // todo: to fix (somehow)
-                      label: settingsController.defaultMinutes.value.toString(),
-                      value: settingsController.defaultMinutes.value.toDouble(),
+                      label: settingsController.defaultMinutes.toString(),
+                      value: settingsController.defaultMinutes.toDouble(),
                       min: 5,
                       max: 60,
                       divisions: 11,
                       onChanged: (newVal) {
-                        settingsController.defaultMinutes.value = newVal.toInt();
+                        settingsController.defaultMinutes = newVal.toInt();
                       },
                     ),
                   ),
@@ -65,20 +62,20 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           //       // const Divider(),
           //       [
           //         Slider(
-          //           value: settingsController.defaultMinutes.value.toDouble(),
+          //           value: settingsController.defaultMinutes.toDouble(),
           //           min: 5,
           //           max: 60,
           //           divisions: 11,
-          //           label: settingsController.defaultMinutes.value.round().toString(),
+          //           label: settingsController.defaultMinutes.round().toString(),
           //           onChanged: (double nValue) {
           //             // setState(() {
-          //             settingsController.defaultMinutes.value = nValue.toInt();
+          //             settingsController.defaultMinutes = nValue.toInt();
           //             // });
           //           },
           //         ).expanded()
           //       ].toRow(mainAxisAlignment: MainAxisAlignment.center),
           //       Text(
-          //         "Work time lasts ${settingsController.defaultMinutes.value} minutes.",
+          //         "Work time lasts ${settingsController.defaultMinutes} minutes.",
           //         style: const TextStyle(
           //           fontSize: 15,
           //         ),
@@ -95,19 +92,17 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
               width: 150,
               child: Row(
                 children: [
-                  Text(
-                    "${settingsController.shortBreakLength.value} min",
-                  ),
+                  Text("${settingsController.shortBreakLength} min"),
                   Expanded(
                     child: Slider(
                       year2023: false, // todo: to fix (somehow)
-                      label: settingsController.shortBreakLength.value.toString(),
-                      value: settingsController.shortBreakLength.value.toDouble(),
+                      label: settingsController.shortBreakLength.toString(),
+                      value: settingsController.shortBreakLength.toDouble(),
                       min: 1,
                       max: 20,
                       divisions: 21,
                       onChanged: (newVal) {
-                        settingsController.shortBreakLength.value = newVal.toInt();
+                        settingsController.shortBreakLength = newVal.toInt();
                       },
                     ),
                   ),
@@ -133,20 +128,20 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           //       // const Divider(),
           //       [
           //         Slider(
-          //           value: settingsController.shortBreakLength.value.toDouble(),
+          //           value: settingsController.shortBreakLength.toDouble(),
           //           min: 1,
           //           max: 20,
           //           divisions: 21,
-          //           label: settingsController.shortBreakLength.value.round().toString(),
+          //           label: settingsController.shortBreakLength.round().toString(),
           //           onChanged: (double nValue) {
           //             // setState(() {
-          //             settingsController.shortBreakLength.value = nValue.toInt();
+          //             settingsController.shortBreakLength = nValue.toInt();
           //             // });
           //           },
           //         ).expanded()
           //       ].toRow(mainAxisAlignment: MainAxisAlignment.center),
           //       Text(
-          //         "Short break lasts ${settingsController.shortBreakLength.value} minutes.",
+          //         "Short break lasts ${settingsController.shortBreakLength} minutes.",
           //         style: const TextStyle(
           //           fontSize: 15,
           //         ),
@@ -164,19 +159,17 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
               width: 150,
               child: Row(
                 children: [
-                  Text(
-                    "${settingsController.longBreakLength.value} min",
-                  ),
+                  Text("${settingsController.longBreakLength} min"),
                   Expanded(
                     child: Slider(
                       year2023: false, // todo: to fix (somehow)
-                      label: settingsController.longBreakLength.value.toString(),
-                      value: settingsController.longBreakLength.value.toDouble(),
+                      label: settingsController.longBreakLength.toString(),
+                      value: settingsController.longBreakLength.toDouble(),
                       min: 1,
                       max: 30,
                       divisions: 31,
                       onChanged: (newVal) {
-                        settingsController.longBreakLength.value = newVal.toInt();
+                        settingsController.longBreakLength = newVal.toInt();
                       },
                     ),
                   ),
@@ -202,20 +195,20 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           //       // const Divider(),
           //       [
           //         Slider(
-          //           value: settingsController.longBreakLength.value.toDouble(),
+          //           value: settingsController.longBreakLength.toDouble(),
           //           min: 1,
           //           max: 30,
           //           divisions: 31,
-          //           label: settingsController.longBreakLength.value.round().toString(),
+          //           label: settingsController.longBreakLength.round().toString(),
           //           onChanged: (double nValue) {
           //             // setState(() {
-          //             settingsController.longBreakLength.value = nValue.toInt();
+          //             settingsController.longBreakLength = nValue.toInt();
           //             // });
           //           },
           //         ).expanded()
           //       ].toRow(mainAxisAlignment: MainAxisAlignment.center),
           //       Text(
-          //         "Long break lasts ${settingsController.longBreakLength.value} minutes.",
+          //         "Long break lasts ${settingsController.longBreakLength} minutes.",
           //         style: const TextStyle(
           //           fontSize: 15,
           //         ),
@@ -228,16 +221,14 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
 
           // EnableNotifications
           ListTile(
-            title: const Text(
-              "Enable Ongoing Timer Notification",
-            ),
+            title: const Text("Enable Ongoing Timer Notification"),
             onTap: () {
-              settingsController.enableNotifications.toggle();
+              settingsController.enableNotifications = !settingsController.enableNotifications;
             },
             trailing: Switch(
-              value: settingsController.enableNotifications.value,
+              value: settingsController.enableNotifications,
               onChanged: (value) {
-                settingsController.enableNotifications.toggle();
+                settingsController.enableNotifications = !settingsController.enableNotifications;
               },
             ),
           ),
@@ -259,13 +250,13 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           //       ListTile(
           //         title: Text("Ongoing Timer Notification"),
           //         trailing: Switch(
-          //           value: settingsController.enableNotifications.value,
+          //           value: settingsController.enableNotifications,
           //           onChanged: (val) {
-          //             settingsController.enableNotifications.toggle();
+          //             settingsController.enableNotifications = !settingsController.enableNotifications;
           //           },
           //         ),
           //         onTap: () {
-          //           settingsController.enableNotifications.toggle();
+          //           settingsController.enableNotifications = !settingsController.enableNotifications;
           //         },
           //       ),
           //     ],
@@ -274,16 +265,14 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
 
           // AutoContinue
           ListTile(
-            title: const Text(
-              "Auto-Continue Timers",
-            ),
+            title: const Text("Auto-Continue Timers"),
             onTap: () {
-              settingsController.autoContinue.toggle();
+              settingsController.autoContinue = !settingsController.autoContinue;
             },
             trailing: Switch(
-              value: settingsController.autoContinue.value,
+              value: settingsController.autoContinue,
               onChanged: (value) {
-                settingsController.autoContinue.toggle();
+                settingsController.autoContinue = !settingsController.autoContinue;
               },
             ),
           ),
@@ -305,13 +294,13 @@ class _PomoLengthSettingsState extends State<PomoLengthSettings> {
           //       ListTile(
           //         title: Text("Auto-Continue Timers"),
           //         trailing: Switch(
-          //           value: settingsController.autoContinue.value,
+          //           value: settingsController.autoContinue,
           //           onChanged: (val) {
-          //             settingsController.autoContinue.toggle();
+          //             settingsController.autoContinue = !settingsController.autoContinue;
           //           },
           //         ),
           //         onTap: () {
-          //           settingsController.autoContinue.toggle();
+          //           settingsController.autoContinue = !settingsController.autoContinue;
           //         },
           //       ),
           //     ],

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 class ResetButton extends StatelessWidget {
@@ -14,7 +14,7 @@ class ResetButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colors = Theme.of(context).colorScheme;
+    // ColorScheme colors = Theme.of(context).colorScheme;
 
     return IconButton.filledTonal(
       tooltip: "Reset Timer",

@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/pomo.dart';
@@ -12,12 +11,9 @@ import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/reset_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/Pomos/start_stop_button.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Pomo/timer_controller.dart';
 import 'package:flutter_pomodoro_timer_app/Pages/Settings/settings_controller.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class Pomo extends StatefulWidget {
   const Pomo({super.key, required this.pageChanged});
@@ -29,12 +25,12 @@ class Pomo extends StatefulWidget {
 }
 
 class _PomoState extends State<Pomo> {
-  SettingsController settingsController = Get.put(SettingsController());
+  SettingsController settingsController = SettingsController.instance;
 
   late Timer timer;
   bool isTimerFinished = false;
 
-  TimerController timerController = Get.put(TimerController());
+  TimerController timerController = TimerController.instance;
 
   final AudioPlayer player = AudioPlayer();
 
@@ -45,16 +41,17 @@ class _PomoState extends State<Pomo> {
     super.initState();
 
     pomoSession = PomoSession(
-        remainingSessions: 0,
-        workLengthSeconds: settingsController.defaultMinutes.value * 60,
-        shortBreaksLeftBeforeLong: 3,
-        endTimestamp: 0,
-        timeLeftString: "",
-        currentPhase: PomoSessionPhase.stopped,
-        shortBreakLengthSeconds: settingsController.shortBreakLength.value * 60,
-        longBreakLengthSeconds: settingsController.longBreakLength.value * 60,
-        shortBreaksDone: 0,
-        pomoLengthSeconds: 0);
+      remainingSessions: 0,
+      workLengthSeconds: settingsController.defaultMinutes * 60,
+      shortBreaksLeftBeforeLong: 3,
+      endTimestamp: 0,
+      timeLeftString: "",
+      currentPhase: PomoSessionPhase.stopped,
+      shortBreakLengthSeconds: settingsController.shortBreakLength * 60,
+      longBreakLengthSeconds: settingsController.longBreakLength * 60,
+      shortBreaksDone: 0,
+      pomoLengthSeconds: 0,
+    );
 
     getPreviousPomoLength();
 
@@ -78,13 +75,10 @@ class _PomoState extends State<Pomo> {
   Future<void> getPreviousPomoLength() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    int boxLength = prefs.getInt("pomoLengthSeconds") ??
-        Duration(minutes: settingsController.defaultMinutes.value).inSeconds;
+    int boxLength = prefs.getInt("pomoLengthSeconds") ?? Duration(minutes: settingsController.defaultMinutes).inSeconds;
 
     if (boxLength > 0) {
-      pomoSession.endTimestamp = DateTime.now()
-          .add(Duration(seconds: boxLength))
-          .millisecondsSinceEpoch;
+      pomoSession.endTimestamp = DateTime.now().add(Duration(seconds: boxLength)).millisecondsSinceEpoch;
       pomoSession.pomoLengthSeconds = boxLength;
       prefs.setInt("pomoLengthSeconds", boxLength);
     } else {
@@ -101,17 +95,18 @@ class _PomoState extends State<Pomo> {
     }
 
     if (isTimerFinished && widget.pageChanged == true) {
-      resetTimer(pomoSession.currentPhase == PomoSessionPhase.working
-          ? settingsController.defaultMinutes.value
-          : pomoSession.currentPhase == PomoSessionPhase.shortBreak
-              ? settingsController.shortBreakLength.value
-              : settingsController.longBreakLength.value);
+      resetTimer(
+        pomoSession.currentPhase == PomoSessionPhase.working
+            ? settingsController.defaultMinutes
+            : pomoSession.currentPhase == PomoSessionPhase.shortBreak
+            ? settingsController.shortBreakLength
+            : settingsController.longBreakLength,
+      );
     }
 
     setState(() {
       pomoSession.start();
-      timer =
-          Timer.periodic(const Duration(milliseconds: 1000), (Timer t) async {
+      timer = Timer.periodic(const Duration(milliseconds: 1000), (Timer t) async {
         updateFormattedTimeLeftString();
         // print("Timer is running, isTimerFinished: $isTimerFinished, time left: ${pomoSession.getDateTime().difference(DateTime.now())}");
         // if (!isTimerFinished) {
@@ -121,20 +116,17 @@ class _PomoState extends State<Pomo> {
       });
     });
 
-    if (!kIsWeb &&
-        !Platform.isWindows &&
-        settingsController.enableNotifications.value) {
+    if (!kIsWeb && !Platform.isWindows && settingsController.enableNotifications) {
       _showNotificationWithChronometer();
     }
   }
 
   Future<void> _showNotificationWithChronometer() async {
-    if (!settingsController.enableNotifications.value) {
+    if (!settingsController.enableNotifications) {
       return;
     }
 
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+    final AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'pomo focus',
       'main',
       channelDescription: 'Pomo Focus',
@@ -152,19 +144,12 @@ class _PomoState extends State<Pomo> {
       progress: (pomoSession.sessionProgress * 100).toInt(),
       maxProgress: 100,
     );
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Pomo Focus',
-      'Pomodoro Session running',
-      platformChannelSpecifics,
-    );
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(id: 0, title: 'Pomo Focus', body: 'Pomodoro Session running', notificationDetails: platformChannelSpecifics);
   }
 
   Future<void> showTimerFinishedNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'pomo focus',
       'main',
       channelDescription: 'Pomo Focus',
@@ -173,14 +158,8 @@ class _PomoState extends State<Pomo> {
       usesChronometer: false,
       onlyAlertOnce: true,
     );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Pomo Focus',
-      'Timer Ended',
-      platformChannelSpecifics,
-    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(id: 0, title: 'Pomo Focus', body: 'Timer Ended', notificationDetails: platformChannelSpecifics);
   }
 
   Future<void> resetTimer(int minutes) async {
@@ -211,9 +190,7 @@ class _PomoState extends State<Pomo> {
   }
 
   void decrementTimeStamp(int minutes) {
-    if (pomoSession.pomoLengthSeconds > 0 ||
-        pomoSession.shortBreakLengthSeconds > 0 ||
-        pomoSession.longBreakLengthSeconds > 0) {
+    if (pomoSession.pomoLengthSeconds > 0 || pomoSession.shortBreakLengthSeconds > 0 || pomoSession.longBreakLengthSeconds > 0) {
       incrementTimeStamp(-minutes);
     }
   }
@@ -233,12 +210,10 @@ class _PomoState extends State<Pomo> {
       pomoSession.endTimer();
       updateFormattedTimeLeftString();
 
-      if (!settingsController.autoContinue.value) {
+      if (!settingsController.autoContinue) {
         timer.cancel();
       }
-      if (!kIsWeb &&
-          !Platform.isWindows &&
-          settingsController.enableNotifications.value) {
+      if (!kIsWeb && !Platform.isWindows && settingsController.enableNotifications) {
         flutterLocalNotificationsPlugin.cancelAll();
         showTimerFinishedNotification();
       }
@@ -250,15 +225,12 @@ class _PomoState extends State<Pomo> {
       return true;
     } else {
       if (pomoSession.currentPhase == PomoSessionPhase.working) {
-        pomoSession.pomoLengthSeconds =
-            pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
+        pomoSession.pomoLengthSeconds = pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
         prefs.setInt("pomoLengthSeconds", pomoSession.pomoLengthSeconds);
       } else if (pomoSession.currentPhase == PomoSessionPhase.shortBreak) {
-        pomoSession.shortBreakLengthSeconds =
-            pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
+        pomoSession.shortBreakLengthSeconds = pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
       } else if (pomoSession.currentPhase == PomoSessionPhase.longBreak) {
-        pomoSession.longBreakLengthSeconds =
-            pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
+        pomoSession.longBreakLengthSeconds = pomoSession.getDateTime().difference(DateTime.now()).inSeconds;
       }
       return false;
     }
@@ -291,33 +263,21 @@ class _PomoState extends State<Pomo> {
                   child: CircularProgressIndicator(
                     value: pomoSession.sessionProgress,
                     strokeWidth: 16,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.surfaceContainer,
+                    backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
                     strokeCap: StrokeCap.round,
                   ),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      pomoSession.timeLeftString,
-                      style: TextStyle(
-                        fontSize: 45,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(pomoSession.timeLeftString, style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold)),
                     Chip(
                       label: Text(
                         phaseToString(pomoSession.currentPhase),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       elevation: 0,
-                      side:
-                          const BorderSide(width: 0, color: Colors.transparent),
+                      side: const BorderSide(width: 0, color: Colors.transparent),
                       padding: const EdgeInsets.all(0),
                       labelPadding: const EdgeInsets.symmetric(horizontal: 10),
                       // visualDensity: VisualDensity.compact,
@@ -340,29 +300,23 @@ class _PomoState extends State<Pomo> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ResetButton(
-                    defaultMinutes:
-                        pomoSession.currentPhase == PomoSessionPhase.working
-                            ? settingsController.defaultMinutes.value
-                            : pomoSession.currentPhase ==
-                                    PomoSessionPhase.shortBreak
-                                ? settingsController.shortBreakLength.value
-                                : settingsController.longBreakLength.value,
-                    updateFormattedTimeLeftString:
-                        updateFormattedTimeLeftString,
+                    defaultMinutes: pomoSession.currentPhase == PomoSessionPhase.working
+                        ? settingsController.defaultMinutes
+                        : pomoSession.currentPhase == PomoSessionPhase.shortBreak
+                        ? settingsController.shortBreakLength
+                        : settingsController.longBreakLength,
+                    updateFormattedTimeLeftString: updateFormattedTimeLeftString,
                     resetTimer: resetTimer,
                   ),
                   StartStopButton(
                     timer: timer,
                     startTimer: startTimer,
-                    updateFormattedTimeLeftString:
-                        updateFormattedTimeLeftString,
-                    defaultMinutes:
-                        pomoSession.currentPhase == PomoSessionPhase.working
-                            ? settingsController.defaultMinutes.value
-                            : pomoSession.currentPhase ==
-                                    PomoSessionPhase.shortBreak
-                                ? settingsController.shortBreakLength.value
-                                : settingsController.longBreakLength.value,
+                    updateFormattedTimeLeftString: updateFormattedTimeLeftString,
+                    defaultMinutes: pomoSession.currentPhase == PomoSessionPhase.working
+                        ? settingsController.defaultMinutes
+                        : pomoSession.currentPhase == PomoSessionPhase.shortBreak
+                        ? settingsController.shortBreakLength
+                        : settingsController.longBreakLength,
                     resetTimer: resetTimer,
                     getTimeLeft: pomoSession.getTimeLeft,
                   ),
@@ -376,8 +330,7 @@ class _PomoState extends State<Pomo> {
                       // resetTimer(defaultMinutes);
                       updateFormattedTimeLeftString();
 
-                      if (timer.isActive &&
-                          !settingsController.autoContinue.value) {
+                      if (timer.isActive && !settingsController.autoContinue) {
                         timer.cancel();
                         if (!kIsWeb && !Platform.isWindows) {
                           flutterLocalNotificationsPlugin.cancelAll();
@@ -407,10 +360,10 @@ class _PomoState extends State<Pomo> {
     //           ResetButton(
     //             defaultMinutes: pomoSession.currentPhase ==
     //                     PomoSessionPhase.working
-    //                 ? settingsController.defaultMinutes.value
+    //                 ? settingsController.defaultMinutes
     //                 : pomoSession.currentPhase == PomoSessionPhase.shortBreak
-    //                     ? settingsController.shortBreakLength.value
-    //                     : settingsController.longBreakLength.value,
+    //                     ? settingsController.shortBreakLength
+    //                     : settingsController.longBreakLength,
     //             updateFormattedTimeLeftString: updateFormattedTimeLeftString,
     //             resetTimer: resetTimer,
     //           ).paddingDirectional(vertical: 5),
@@ -420,10 +373,10 @@ class _PomoState extends State<Pomo> {
     //             updateFormattedTimeLeftString: updateFormattedTimeLeftString,
     //             defaultMinutes: pomoSession.currentPhase ==
     //                     PomoSessionPhase.working
-    //                 ? settingsController.defaultMinutes.value
+    //                 ? settingsController.defaultMinutes
     //                 : pomoSession.currentPhase == PomoSessionPhase.shortBreak
-    //                     ? settingsController.shortBreakLength.value
-    //                     : settingsController.longBreakLength.value,
+    //                     ? settingsController.shortBreakLength
+    //                     : settingsController.longBreakLength,
     //             resetTimer: resetTimer,
     //             getTimeLeft: pomoSession.getTimeLeft,
     //           ).paddingSymmetric(vertical: 0),
